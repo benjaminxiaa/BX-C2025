@@ -4,7 +4,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.math.util.Units;
 
-public class RobotMap {
+public class RobotMap 
+{
 
     // Global Robot Constants
     public static final double MAX_VOLTAGE = 12;
@@ -12,7 +13,8 @@ public class RobotMap {
     public static final String CAN_CHAIN = "Drivetrain";
     
 
-    public static final class OI {
+    public static final class OI 
+    {
         public static final double JOYSTICK_DEADBAND = 0.15;
         public static final double TRIGGER_DEADBAND = 0.1;
       
@@ -20,14 +22,16 @@ public class RobotMap {
         public static final int OPERATOR_ID = 1;
     }
 
-    public static final class PID {
+    public static final class PID 
+    {
         public static final int PID_PRIMARY = 0;
         public static final int PID_AUXILIARY = 1;
       
         public static final int SLOT_INDEX = 0;
     }
 
-    public static final class SwerveModule {
+    public static final class SwerveModule 
+    {
         // id of translation motors
         // FL, FR, BL, BR
         public static final int[] TRANSLATION_IDS = {13, 3, 9, 6};
@@ -82,7 +86,8 @@ public class RobotMap {
         public static final double TRANSLATION_kD = 0.00;  // TODO
     }
 
-    public static final class Drivetrain {
+    public static final class Drivetrain 
+    {
         // Pigeon ID
         public static final int PIGEON_ID = 7;
 
@@ -103,4 +108,31 @@ public class RobotMap {
 
     }
 
+	public static final class Elevator 
+    {
+		public static final double MAX_ERROR = 1; // TODO rotations
+												
+		public static final double kP = 0.13; // TODO
+		public static final double kG = 0.09; // TODO
+
+        public static final InvertedValue MASTER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
+        public static final InvertedValue FOLLOWER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
+
+        public static final int MASTER_ID = 0; // TODO
+        public static final int FOLLOWER_ID = 0; // TODO
+        public static final int LIMIT_SWITCH_ID = 0; // TODO
+
+        public static final double FORWARD_SOFT_LIMIT = 0; // TODO rotations
+
+        public static final double STATOR_CURRENT_LIMIT = 0; // TODO A
+
+        public static final double REVERSE_SOFT_LIMIT = 0; // TODO rotations
+
+        public static final double CRUISE_ACCELERATION = 0; // TODO rotations / second^2
+
+        public static final double CRUISE_VELOCITY = 0; // TODO rotations / second
+
+        public static final double FAR_EXTENDED_DISTANCE = 0; // TODO rotations
+
+    }
 }
