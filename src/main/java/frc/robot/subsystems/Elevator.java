@@ -80,7 +80,7 @@ public class Elevator extends SubsystemBase
 	  followerConfig.MotorOutput.Inverted = RobotMap.Elevator.FOLLOWER_INVERTED;
 	  followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-	  follower.getConfigurator().apply(masterConfig);
+	  follower.getConfigurator().apply(followerConfig);
 
 	  follower.setControl(new Follower(RobotMap.Elevator.MASTER_ID, false));
   }
