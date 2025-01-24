@@ -6,7 +6,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -28,8 +28,6 @@ public class Elevator extends SubsystemBase
 
         follower = new TalonFX(RobotMap.Elevator.FOLLOWER_ID, RobotMap.CAN_CHAIN);
 
-        master.clearStickyFaults();
-        follower.clearStickyFaults();
         config();
 
         limitSwitch = new DigitalInput(RobotMap.Elevator.LIMIT_SWITCH_ID);
@@ -38,6 +36,8 @@ public class Elevator extends SubsystemBase
 
     private void config() 
     {
+        master.clearStickyFaults();
+        follower.clearStickyFaults();
 
         TalonFXConfiguration masterConfig = new TalonFXConfiguration();
 
@@ -58,9 +58,6 @@ public class Elevator extends SubsystemBase
         masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = RobotMap.Elevator.REVERSE_SOFT_LIMIT;
         masterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-        masterConfig.MotionMagic.MotionMagicAcceleration = RobotMap.Elevator.CRUISE_ACCELERATION;
-        masterConfig.MotionMagic.MotionMagicCruiseVelocity = RobotMap.Elevator.CRUISE_VELOCITY;
-
         masterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         master.getConfigurator().apply(masterConfig);
@@ -80,7 +77,7 @@ public class Elevator extends SubsystemBase
      */
     public void moveToPosition(double desired) 
     {
-        master.setControl(new MotionMagicVoltage(desired));
+        master.setControl(new PositionVoltage(desired));
     }
 
     /**

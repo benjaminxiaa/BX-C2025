@@ -113,6 +113,9 @@ public class RobotMap
 		public static final double MAX_ERROR = 1; // TODO rotations
 												
 		public static final double kP = 0.13; // TODO
+        public static final double kI = 0; // TODO
+        public static final double kD = 0; // TODO
+
 		public static final double kG = 0.09; // TODO
 
         public static final InvertedValue MASTER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
@@ -122,17 +125,30 @@ public class RobotMap
         public static final int FOLLOWER_ID = 0; // TODO
         public static final int LIMIT_SWITCH_ID = 0; // TODO
 
-        public static final double FORWARD_SOFT_LIMIT = 0; // TODO rotations
-
         public static final double STATOR_CURRENT_LIMIT = 0; // TODO A
-
+        public static final double FORWARD_SOFT_LIMIT = 0; // TODO rotations
         public static final double REVERSE_SOFT_LIMIT = 0; // TODO rotations
-
-        public static final double CRUISE_ACCELERATION = 0; // TODO rotations / second^2
-
-        public static final double CRUISE_VELOCITY = 0; // TODO rotations / second
 
         public static final double FAR_EXTENDED_DISTANCE = 0; // TODO rotations
 
+    }
+    
+    public static final class EndEffector
+    {
+        public static final int ID = 0; // TODO
+        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
+        public static final int FORWARD_LIMIT_SWITCH_ID = 0; // TODO
+        public static final int BACKWARD_LIMIT_SWITCH_ID = 0; // TODO
+        public static final double ROT_TO_METERS = 0; // TODO
+
+        public static final double kP = 0; // TODO
+        public static final double kI = 0; // TODO
+        public static final double kD = 0; // TODO
+
+        public static final double STATOR_CURRENT_LIMIT = 0; // TODO A
+        public static final double FORWARD_SOFT_LIMIT = 0; // TODO rotations
+        public static final double REVERSE_SOFT_LIMIT = 0; // TODO rotations
+
+        public static final double ROLLER_SPEED = 0; // TODO meters / second
     }
 }
