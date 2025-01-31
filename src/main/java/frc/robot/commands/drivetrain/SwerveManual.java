@@ -68,12 +68,12 @@ public class SwerveManual extends Command {
             Drivetrain.getInstance()
                 .setAngleAndDrive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                        vx, vy, -omega, Rotation2d.fromDegrees(0)));
+                        vx, vy, omega, Rotation2d.fromDegrees(0)));
         else
             Drivetrain.getInstance()
                 .setAngleAndDrive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                        vx, vy, -omega, Drivetrain.getInstance().getRotation()));
+                        vx, vy, omega, Drivetrain.getInstance().getRotation()));
     }
 
     /**

@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.drivetrain.SwerveManual;
 import frc.robot.subsystems.swerve.Drivetrain;
+import frc.robot.util.Telemetry;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,14 +22,20 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
+
+   private Telemetry telemetry;
   @Override
   public void robotInit() {
       CommandScheduler.getInstance().setDefaultCommand(Drivetrain.getInstance(), new SwerveManual());
-  }
+      telemetry = new Telemetry();
+      // telemetry.startServer();
+      telemetry.swerveStates();
+    }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    telemetry.publish();
   }
 
   @Override

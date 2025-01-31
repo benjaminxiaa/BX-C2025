@@ -3,7 +3,6 @@ package frc.robot.subsystems.swerve;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
-import static edu.wpi.first.units.MutableMeasure.mutable;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
@@ -39,14 +38,14 @@ public class Drivetrain extends SubsystemBase {
     private Pigeon2 pigeon;
     private double prevHeading;
 
-    // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
-    private final MutVoltage _appliedVoltage = mutable(Volts.of(0));
-    // Mutable holder for unit-safe linear distance values, persisted to avoid
-    // reallocation.
-    private final MutDistance _distance = mutable(Meters.of(0));
-    // Mutable holder for unit-safe linear velocity values, persisted to avoid
-    // reallocation.
-    private final MutLinearVelocity _velocity = mutable(MetersPerSecond.of(0));
+    // // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
+    // private final MutVoltage _appliedVoltage = mutable(Volts.of(0));
+    // // Mutable holder for unit-safe linear distance values, persisted to avoid
+    // // reallocation.
+    // private final MutDistance _distance = mutable(Meters.of(0));
+    // // Mutable holder for unit-safe linear velocity values, persisted to avoid
+    // // reallocation.
+    // private final MutLinearVelocity _velocity = mutable(MetersPerSecond.of(0));
 
     private SwerveDriveKinematics kinematics; // converts chassis speeds (x, y, theta) to module states (speed, angle)
 
@@ -141,7 +140,7 @@ public class Drivetrain extends SubsystemBase {
      * @return pitch of pigeon in degrees
      */
     public double getPitch() {
-        double pitch = pigeon.getPitch().getValue();
+        double pitch = pigeon.getPitch().getValueAsDouble();
         return pitch;
     }
 
@@ -177,7 +176,7 @@ public class Drivetrain extends SubsystemBase {
      * @return roll of pigeon in degrees
      */
     public double getRoll() {
-        double roll = pigeon.getRoll().getValue();
+        double roll = pigeon.getRoll().getValueAsDouble();
         return roll;
     }
 
@@ -296,32 +295,32 @@ public class Drivetrain extends SubsystemBase {
         return states;
     }
 
-    private final SysIdRoutine _sysId = new SysIdRoutine(
-            new SysIdRoutine.Config(),
-            new SysIdRoutine.Mechanism(
-                    (Voltage volts) -> {
-                        runSwerveCharacterization(volts.in(Volts));
-                    },
-                    log -> {
-                        log.motor("drive-left")
-                                .voltage(
-                                        _appliedVoltage.mut_replace(
-                                                swerveModules[3].getTranslationVoltage(), Volts))
-                                .linearPosition(
-                                        _distance.mut_replace(swerveModules[3].getWheelPosition(), Meters))
-                                .linearVelocity(
-                                        _velocity.mut_replace(swerveModules[3].getSpeed(), MetersPerSecond));
-                        log.motor("drive-right")
-                                .voltage(
-                                        _appliedVoltage.mut_replace(
-                                                swerveModules[0].getTranslationVoltage(),
-                                                Volts))
-                                .linearPosition(
-                                        _distance.mut_replace(swerveModules[3].getWheelPosition(), Meters))
-                                .linearVelocity(
-                                        _velocity.mut_replace(swerveModules[0].getSpeed(), MetersPerSecond));
-                    },
-                    this));
+    // private final SysIdRoutine _sysId = new SysIdRoutine(
+    //         new SysIdRoutine.Config(),
+    //         new SysIdRoutine.Mechanism(
+    //                 (Voltage volts) -> {
+    //                     runSwerveCharacterization(volts.in(Volts));
+    //                 },
+    //                 log -> {
+    //                     log.motor("drive-left")
+    //                             .voltage(
+    //                                     _appliedVoltage.mut_replace(
+    //                                             swerveModules[3].getTranslationVoltage(), Volts))
+    //                             .linearPosition(
+    //                                     _distance.mut_replace(swerveModules[3].getWheelPosition(), Meters))
+    //                             .linearVelocity(
+    //                                     _velocity.mut_replace(swerveModules[3].getSpeed(), MetersPerSecond));
+    //                     log.motor("drive-right")
+    //                             .voltage(
+    //                                     _appliedVoltage.mut_replace(
+    //                                             swerveModules[0].getTranslationVoltage(),
+    //                                             Volts))
+    //                             .linearPosition(
+    //                                     _distance.mut_replace(swerveModules[3].getWheelPosition(), Meters))
+    //                             .linearVelocity(
+    //                                     _velocity.mut_replace(swerveModules[0].getSpeed(), MetersPerSecond));
+    //                 },
+    //                 this));
 
     public void runSwerveCharacterization(double volts) {
         for (SwerveModule module : swerveModules) {
@@ -329,13 +328,13 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return _sysId.quasistatic(direction);
-    }
+    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    //     return _sysId.quasistatic(direction);
+    // }
 
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return _sysId.dynamic(direction);
-    }
+    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    //     return _sysId.dynamic(direction);
+    // }
 
     @Override
     public void periodic() {

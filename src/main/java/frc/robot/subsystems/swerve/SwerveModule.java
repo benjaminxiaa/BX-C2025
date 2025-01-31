@@ -7,7 +7,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
@@ -16,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.RobotMap;
+import frc.robot.util.Telemetry;
 
 public class SwerveModule {
     //motors on the swerve modules
@@ -67,8 +67,8 @@ public class SwerveModule {
 
         transConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         transConfig.CurrentLimits.SupplyCurrentLimit = RobotMap.SwerveModule.TRANS_CURRENT_LIMIT;
-        transConfig.CurrentLimits.SupplyCurrentThreshold = RobotMap.SwerveModule.TRANS_THRESHOLD_CURRENT;
-        transConfig.CurrentLimits.SupplyTimeThreshold = RobotMap.SwerveModule.TRANS_THRESHOLD_TIME;
+        transConfig.CurrentLimits.SupplyCurrentLowerLimit = RobotMap.SwerveModule.TRANS_LOWER_CURRENT_LIMIT;
+        transConfig.CurrentLimits.SupplyCurrentLowerTime = RobotMap.SwerveModule.TRANS_LOWER_LIMIT_TIME;
 
         transConfig.Slot0.kP = RobotMap.SwerveModule.TRANSLATION_kP;
         transConfig.Slot0.kI = RobotMap.SwerveModule.TRANSLATION_kI;
@@ -91,8 +91,8 @@ public class SwerveModule {
 
         rotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         rotConfig.CurrentLimits.SupplyCurrentLimit = RobotMap.SwerveModule.ROT_CURRENT_LIMIT;
-        rotConfig.CurrentLimits.SupplyCurrentThreshold = RobotMap.SwerveModule.ROT_THRESHOLD_CURRENT;
-        rotConfig.CurrentLimits.SupplyTimeThreshold = RobotMap.SwerveModule.ROT_THRESHOLD_TIME;
+        rotConfig.CurrentLimits.SupplyCurrentLowerLimit = RobotMap.SwerveModule.ROT_LOWER_CURRENT_LIMIT;
+        rotConfig.CurrentLimits.SupplyCurrentLowerTime = RobotMap.SwerveModule.ROT_LOWER_LIMIT_TIME;
 
         rotConfig.Slot0.kP = RobotMap.SwerveModule.ROTATION_kP;
         rotConfig.Slot0.kI = RobotMap.SwerveModule.ROTATION_kI;
@@ -107,7 +107,7 @@ public class SwerveModule {
         canCoder.clearStickyFaults();
 
         CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
-        canCoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+        canCoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
         canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         canCoderConfig.MagnetSensor.MagnetOffset = -RobotMap.SwerveModule.CAN_CODER_OFFSETS[ID]; // offset is ADDED, so -offset
 
@@ -125,6 +125,9 @@ public class SwerveModule {
         driveVelocity.Velocity = state.speedMetersPerSecond/RobotMap.SwerveModule.TRANS_ROT_TO_METERS;
         driveVelocity.FeedForward = feedforward.calculate(state.speedMetersPerSecond);
         translation.setControl(driveVelocity);
+
+        Telemetry.putModule(ID, "Desired Velocity", state.speedMetersPerSecond);
+        Telemetry.putModule(ID, "Current Velocity", getSpeed());
     }
     /*
      * adjusts the angle of a swerve module state 
@@ -162,7 +165,7 @@ public class SwerveModule {
      */
     private void setAbsolutePosition() {
         canCoder.getAbsolutePosition().refresh();
-        double position = canCoder.getAbsolutePosition().getValue();// rotations
+        double position = canCoder.getAbsolutePosition().getValueAsDouble();// rotations
         // SmartDashboard.putNumber("CANCoder Pos (Raw) " + ID, canCoder.getAbsolutePosition().getValue());
         // SmartDashboard.putNumber("CANCoder Pos + offset " + ID, position);
         rotation.setPosition(position); // rotations
@@ -176,14 +179,14 @@ public class SwerveModule {
      * returns the angle of the rotation motor 
      */
     public double getAngle() {
-        return rotation.getPosition().getValue() * RobotMap.SwerveModule.ROT_ROT_TO_ANGLE;
+        return rotation.getPosition().getValueAsDouble() * RobotMap.SwerveModule.ROT_ROT_TO_ANGLE;
     }
 
     /*
      * return speed of translation motor 
      */ 
     public double getSpeed() {
-        return translation.getVelocity().getValue() * RobotMap.SwerveModule.TRANS_ROT_TO_METERS;
+        return translation.getVelocity().getValueAsDouble() * RobotMap.SwerveModule.TRANS_ROT_TO_METERS;
     }
 
     /**
@@ -206,7 +209,7 @@ public class SwerveModule {
      * returns position of translation motor
      */
     public double getWheelPosition() {
-        return translation.getPosition().getValue() * RobotMap.SwerveModule.TRANS_ROT_TO_METERS;
+        return translation.getPosition().getValueAsDouble() * RobotMap.SwerveModule.TRANS_ROT_TO_METERS;
     }
 
     //returns position and angle

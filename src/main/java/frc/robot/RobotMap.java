@@ -9,7 +9,7 @@ public class RobotMap {
     // Global Robot Constants
     public static final double MAX_VOLTAGE = 12;
     public static final double ROBOT_LOOP = 0.02;
-    public static final String CAN_CHAIN = "Drivetrain";
+    public static final String CAN_CHAIN = "rio";
     
 
     public static final class OI {
@@ -45,16 +45,16 @@ public class RobotMap {
         public static final int[] CAN_CODER_ID = {12, 2, 10, 5};
 
         // offsets of cancoders of each swerve module (in rotations)
-        public static final double[] CAN_CODER_OFFSETS = new double[]{-0.206055, 0.169922, -0.489746, -0.424316};
+        public static final double[] CAN_CODER_OFFSETS = new double[]{-0.128906, 0.225098, 0.363037, -0.321289};
         // current limit constants for translation motors
-        public static final double TRANS_CURRENT_LIMIT = 40;
-        public static final double TRANS_THRESHOLD_CURRENT = 55;
-        public static final double TRANS_THRESHOLD_TIME= 0.1;
+        public static final double TRANS_LOWER_CURRENT_LIMIT = 40;
+        public static final double TRANS_CURRENT_LIMIT = 60;
+        public static final double TRANS_LOWER_LIMIT_TIME= 0.1;
 
         // current limit constants for rotation motors
-        public static final double ROT_CURRENT_LIMIT = 25;
-        public static final double ROT_THRESHOLD_CURRENT = 40;
-        public static final double ROT_THRESHOLD_TIME = 0.1;
+        public static final double ROT_LOWER_CURRENT_LIMIT = 25;
+        public static final double ROT_CURRENT_LIMIT = 40;
+        public static final double ROT_LOWER_LIMIT_TIME = 0.1;
 
         // gear ratios
         public static final double TRANSLATION_GEAR_RATIO = 6.12;
@@ -67,38 +67,36 @@ public class RobotMap {
         public static final double ROT_ROT_TO_ANGLE = 360.0; // rotations to degrees
 
         // rotation kP
-        public static final double ROTATION_kP = 50; // TODO
+        public static final double ROTATION_kP = 40; //50; // TODO
         public static final double ROTATION_kI = 0;
         public static final double ROTATION_kD = 0;
 
         // Translation FF Values
-        public static final double TRANSLATION_kS = 0.13561; // TODO
-        public static final double TRANSLATION_kV = 1.9051; // TODO
-        public static final double TRANSLATION_kA = 1.5737; // TODO
+        public static final double TRANSLATION_kS = 0; //0.13561; // TODO
+        public static final double TRANSLATION_kV = 0; //1.9051; // TODO
+        public static final double TRANSLATION_kA = 0; //1.5737; // TODO
 
         // pid
-        public static final double TRANSLATION_kP = 1.7; // TODO
-        public static final double TRANSLATION_kI = 0.5; // TODO
+        public static final double TRANSLATION_kP = 1.0; //1.7; // TODO
+        public static final double TRANSLATION_kI = 0; //0.5; // TODO
         public static final double TRANSLATION_kD = 0.00;  // TODO
     }
 
     public static final class Drivetrain {
         // Pigeon ID
-        public static final int PIGEON_ID = 7;
+        public static final int PIGEON_ID = 1;
 
-        public static final double PIGEON_kP = 0.00012; // TODO
+        public static final double PIGEON_kP = 0.0012; // TODO
 
         public static final double MIN_OUTPUT = 0.05;
         
         // Robot Dimensions
-        public static final double ROBOT_LENGTH = Units.inchesToMeters(28.5);
-        public static final double ROBOT_WIDTH = Units.inchesToMeters(28.5);
+        public static final double ROBOT_LENGTH = Units.inchesToMeters(30);
+        public static final double ROBOT_WIDTH = Units.inchesToMeters(28);
 
-        public static final double MAX_DRIVING_SPEED = 5.0; // m/s //TODO
-        public static final double EXTENDED_MAX_DRIVING_SPEED_MULTIPLIER = 0.4;
+        public static final double MAX_DRIVING_SPEED = 7.0; // m/s //TODO
         public static final double MAX_ACCELERATION = 8.5;
-        public static final double MAX_ANGLE_VELOCITY = Math.PI;
-        public static final double EXTENDED_MAX_ANGLE_VELOCITY_MULTIPLIER = 0.7;
+        public static final double MAX_ANGLE_VELOCITY = Math.PI*2;
         public static final double MAX_ANGLE_ACCELERATION = MAX_ANGLE_VELOCITY / 2.0;
 
     }
