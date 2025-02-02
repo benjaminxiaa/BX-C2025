@@ -128,6 +128,9 @@ public class SwerveModule {
 
         Telemetry.putModule(ID, "Desired Velocity", state.speedMetersPerSecond);
         Telemetry.putModule(ID, "Current Velocity", getSpeed());
+
+        Telemetry.putModule(ID, "Desired Angle", state.angle.getDegrees());
+        Telemetry.putModule(ID, "Current Angle", getAngle());
     }
     /*
      * adjusts the angle of a swerve module state 

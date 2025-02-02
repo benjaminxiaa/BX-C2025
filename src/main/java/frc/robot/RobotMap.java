@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public class RobotMap {
 
@@ -25,6 +26,13 @@ public class RobotMap {
         public static final int PID_AUXILIARY = 1;
       
         public static final int SLOT_INDEX = 0;
+    }
+
+    public static final class Field {
+        // field dimensions in meters
+        public static final double FIELD_LENGTH = 17.55;
+        public static final double FIELD_WIDTH = 8.05;
+        public static final Field2d FIELD = new Field2d();
     }
 
     public static final class SwerveModule {
@@ -72,31 +80,31 @@ public class RobotMap {
         public static final double ROTATION_kD = 0;
 
         // Translation FF Values
-        public static final double TRANSLATION_kS = 0; //0.13561; // TODO
-        public static final double TRANSLATION_kV = 0; //1.9051; // TODO
-        public static final double TRANSLATION_kA = 0; //1.5737; // TODO
+        public static final double TRANSLATION_kS = 0.13561; // TODO
+        public static final double TRANSLATION_kV = 1.9051; // TODO
+        public static final double TRANSLATION_kA = 1.5737; // TODO
 
         // pid
-        public static final double TRANSLATION_kP = 1.0; //1.7; // TODO
-        public static final double TRANSLATION_kI = 0; //0.5; // TODO
-        public static final double TRANSLATION_kD = 0.00;  // TODO
+        public static final double TRANSLATION_kP = 1.7; //1.7; // TODO
+        public static final double TRANSLATION_kI = 0.5; //0.5; // TODO
+        public static final double TRANSLATION_kD = 0.0; //0.00;  // TODO
     }
 
     public static final class Drivetrain {
         // Pigeon ID
         public static final int PIGEON_ID = 1;
 
-        public static final double PIGEON_kP = 0.0012; // TODO
+        public static final double PIGEON_kP = 0.003; // TODO
 
-        public static final double MIN_OUTPUT = 0.05;
+        public static final double MIN_OUTPUT = 0.1;
         
         // Robot Dimensions
         public static final double ROBOT_LENGTH = Units.inchesToMeters(30);
         public static final double ROBOT_WIDTH = Units.inchesToMeters(28);
 
-        public static final double MAX_DRIVING_SPEED = 7.0; // m/s //TODO
+        public static final double MAX_DRIVING_SPEED = 5.0; // m/s //TODO
         public static final double MAX_ACCELERATION = 8.5;
-        public static final double MAX_ANGLE_VELOCITY = Math.PI*2;
+        public static final double MAX_ANGLE_VELOCITY = Math.PI;
         public static final double MAX_ANGLE_ACCELERATION = MAX_ANGLE_VELOCITY / 2.0;
 
     }

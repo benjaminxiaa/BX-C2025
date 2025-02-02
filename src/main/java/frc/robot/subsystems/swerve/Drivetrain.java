@@ -3,10 +3,6 @@ package frc.robot.subsystems.swerve;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -19,16 +15,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.MutableMeasure;
-import edu.wpi.first.units.measure.Velocity;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.RobotMap;
-// import frc.robot.util.Telemetry;
+import frc.robot.util.Flip;
 
 public class Drivetrain extends SubsystemBase {
     private static Drivetrain instance;
@@ -62,13 +51,7 @@ public class Drivetrain extends SubsystemBase {
 
     private Drivetrain() {
         // initialize swerve modules
-        // SmartDashboard.putNumber("TranslationkP",
-        // RobotMap.SwerveModule.TRANSLATION_KP);
-        // SmartDashboard.putNumber("TranslationkI",
-        // RobotMap.SwerveModule.TRANSLATION_KI);
-        // SmartDashboard.putNumber("TranslationkD",
-        // RobotMap.SwerveModule.TRANSLATION_KD);
-        // SmartDashboard.putNumber("TranslationkP", RobotMap.SwerveModule.ROTATION_KP);
+
         swerveModules = new SwerveModule[] {
                 new SwerveModule(0), new SwerveModule(1), new SwerveModule(2), new SwerveModule(3)
         };
@@ -84,10 +67,6 @@ public class Drivetrain extends SubsystemBase {
                 new Translation2d(-RobotMap.Drivetrain.ROBOT_LENGTH / 2, RobotMap.Drivetrain.ROBOT_WIDTH / 2),
                 new Translation2d(-RobotMap.Drivetrain.ROBOT_LENGTH / 2, -RobotMap.Drivetrain.ROBOT_WIDTH / 2));
 
-        // SmartDashboard.putData("Rotation PID", thetaController);
-        // SmartDashboard.putNumber("kP", thetaController.getP());
-        // SmartDashboard.putNumber("kI", thetaController.getI());
-        // SmartDashboard.putNumber("kD", thetaController.getD());
 
         // initial pose (holds the x, y, heading)
         Pose2d initalPoseMeters = new Pose2d();
@@ -172,14 +151,6 @@ public class Drivetrain extends SubsystemBase {
     // }
     // }
 
-    /**
-     * @return roll of pigeon in degrees
-     */
-    public double getRoll() {
-        double roll = pigeon.getRoll().getValueAsDouble();
-        return roll;
-    }
-
     public boolean robotCentric() {
         return robotCentric;
     }
@@ -205,6 +176,21 @@ public class Drivetrain extends SubsystemBase {
                 swerveModules[2].getSwerveModulePosition(),
                 swerveModules[3].getSwerveModulePosition()
         };
+    }
+
+    /**
+     * Sets the initial pose of the drivetrain
+     * 
+     * @param pose intial Pose2d of drivetrain
+     */
+    public void setPose(Pose2d pose) {
+        pose = Flip.apply(pose);
+        swerveModules[0].zeroTranslation();
+        swerveModules[1].zeroTranslation();
+        swerveModules[2].zeroTranslation();
+        swerveModules[3].zeroTranslation();
+        setYaw(pose.getRotation().getDegrees());
+        poseEstimator.resetPosition(getRotation(), getModulePositions(), pose);
     }
 
     /**

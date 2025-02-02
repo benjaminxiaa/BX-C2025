@@ -6,6 +6,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import frc.robot.OI;
 import frc.robot.subsystems.swerve.Drivetrain;
 
@@ -22,10 +23,6 @@ public class Telemetry {
     private NetworkTable _autons;
 
     private static NetworkTable _drive;
-    private static NetworkTable _elevator;
-    private static NetworkTable _pivot;
-    private static NetworkTable _shooter;
-    private static NetworkTable _intake;
 
     private NetworkTable _modules;
     private static NetworkTable _zero;
@@ -50,6 +47,8 @@ public class Telemetry {
     private StructArrayPublisher<SwerveModuleState> swerveModuleStates;
     private StructArrayPublisher<SwerveModuleState> swerveModuleStpsOptmized;
 
+    // private StructPublisher<Pose2d> posePublisher;
+
     public Telemetry() {
         // main = NetworkTableInstance.getDefault();
         inst = NetworkTableInstance.getDefault();
@@ -71,11 +70,6 @@ public class Telemetry {
         _two = _modules.getSubTable("2");
         _three = _modules.getSubTable("3");
 
-        _elevator = main.getSubTable("Elevator");
-        _pivot = main.getSubTable("Pivot");
-        _shooter = main.getSubTable("Shooter");
-        _intake = main.getSubTable("Intake");
-
         _vision = main.getSubTable("Vision");
         _targets = _vision.getSubTable("At Targets");
         _limelight = _vision.getSubTable("Limelight");
@@ -95,9 +89,10 @@ public class Telemetry {
         NetworkTableEntry rotation = _odometry.getEntry("Rotation");
         rotation.setDouble(drive.getRotation().getDegrees());
 
-
         NetworkTableEntry poseRotation = _odometry.getEntry("Pose Rotation in Deg");
         poseRotation.setDouble(drive.getPoseEstimatorPose2d().getRotation().getDegrees());
+
+        // posePublisher = _odometry.getInstance().getStructTopic("Pose", Pose2d.struct).publish();
     }
 
     public void debug() {
@@ -185,8 +180,8 @@ public class Telemetry {
         // NetworkTableEntry start = _operator.getEntry("Start");
         // start.setBoolean(oiOperator.getButtonStartState());
 
-        // NetworkTableEntry isRobotCentric = _debug.getEntry("Robot Centric");
-        // isRobotCentric.setBoolean(drive.robotCentric());
+        NetworkTableEntry isRobotCentric = _debug.getEntry("Robot Centric");
+        isRobotCentric.setBoolean(drive.robotCentric());
     }
 
 
@@ -273,6 +268,8 @@ public class Telemetry {
     public void publish() {
         swerveModuleStates.set(drive.getModuleStates());
         swerveModuleStpsOptmized.set(drive.getOptimizedStates());
+
+        // posePublisher.set(drive.getPoseEstimatorPose2d());
 
         debug();
         odometry();
