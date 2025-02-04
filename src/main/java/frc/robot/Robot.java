@@ -9,6 +9,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.drivetrain.SwerveManual;
+import frc.robot.commands.elevator.ElevatorManual;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.swerve.Drivetrain;
 import frc.robot.util.Telemetry;
 
@@ -29,6 +31,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
       CommandScheduler.getInstance().setDefaultCommand(Drivetrain.getInstance(), new SwerveManual());
+      CommandScheduler.getInstance().setDefaultCommand(Elevator.getInstance(), new ElevatorManual());
+      
       telemetry = new Telemetry();
       // telemetry.startServer();
       telemetry.swerveStates();

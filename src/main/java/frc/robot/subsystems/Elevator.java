@@ -8,7 +8,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
@@ -52,32 +52,27 @@ public class Elevator extends SubsystemBase
         masterConfig.CurrentLimits.StatorCurrentLimit = RobotMap.Elevator.STATOR_CURRENT_LIMIT;
         masterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
+        masterConfig.CurrentLimits.SupplyCurrentLimit = RobotMap.Elevator.SUPPLY_CURRENT_LIMIT;
+        masterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
         masterConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = RobotMap.Elevator.FORWARD_SOFT_LIMIT;
         masterConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 
         masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = RobotMap.Elevator.REVERSE_SOFT_LIMIT;
         masterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-        masterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        masterConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         master.getConfigurator().apply(masterConfig);
 
         TalonFXConfiguration followerConfig = new TalonFXConfiguration();
 
         followerConfig.MotorOutput.Inverted = RobotMap.Elevator.FOLLOWER_INVERTED;
-        followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         follower.getConfigurator().apply(followerConfig);
 
         follower.setControl(new Follower(RobotMap.Elevator.MASTER_ID, false));
-    }
-
-    /**
-     * @param desired rotations
-     */
-    public void moveToPosition(double desired) 
-    {
-        master.setControl(new PositionVoltage(desired));
     }
 
     /**
@@ -95,13 +90,31 @@ public class Elevator extends SubsystemBase
     {
         return master.getPosition().getValueAsDouble();
     }
+    
+    /**
+     * @return rotations per second
+     */
+    public double getVelocity()
+    {
+        return master.getVelocity().getValueAsDouble();
+    }
 
     /**
      * @param power range [-1, 1]
      */
-    public void setExtensionPower(double power) 
+    public void setElevatorPower(double power) 
     {
         master.setControl(new DutyCycleOut(power));
+    }
+
+    public void setSensorPosition(double position)
+    {
+        master.getConfigurator().setPosition(0);
+    }
+
+    public void moveToPosition(double desired)
+    {
+        master.setControl(new PositionVoltage(desired));
     }
 
     public void resetEncoders() 
@@ -110,20 +123,21 @@ public class Elevator extends SubsystemBase
         follower.getConfigurator().setPosition(0);
     }
 
-    public boolean extensionStop() 
+    public boolean isLimitHit() 
     {
         return !limitSwitch.get();
     }
 
-    public boolean isFarExtended() 
+    public boolean isStalling()
     {
-        return getPosition() > RobotMap.Elevator.FAR_EXTENDED_DISTANCE;
+        return master.getStatorCurrent().getValueAsDouble() >= RobotMap.Elevator.ELEVATOR_STALLING_CURRENT;
     }
 
-    @Override
-    public void periodic() 
-    {
-    }
+    // implement if need a slower speed for when the elevator is max extended to prevent wobbling
+    // public boolean isFarExtended() 
+    // {
+    //     return getPosition() > RobotMap.Elevator.LEVEL_HEIGHTS[3];
+    // }
 
     public static Elevator getInstance() 
     {
@@ -131,14 +145,5 @@ public class Elevator extends SubsystemBase
             instance = new Elevator();
         }
         return instance;
-    }
-
-    @Override
-    public void initSendable(SendableBuilder builder) 
-    {
-        builder.setSmartDashboardType("Elevator");
-        builder.setActuator(true);
-        builder.setSafeState(() -> setExtensionPower(0));
-        builder.addDoubleProperty("Position", this::getPosition, this::moveToPosition);
     }
 }

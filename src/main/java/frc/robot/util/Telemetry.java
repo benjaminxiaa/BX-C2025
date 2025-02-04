@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import frc.robot.OI;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.swerve.Drivetrain;
 
 public class Telemetry {
@@ -23,6 +24,7 @@ public class Telemetry {
     private NetworkTable _autons;
 
     private static NetworkTable _drive;
+    private static NetworkTable _elevator;
 
     private NetworkTable _modules;
     private static NetworkTable _zero;
@@ -41,6 +43,7 @@ public class Telemetry {
     private NetworkTable _operator;
 
     private Drivetrain drive = Drivetrain.getInstance();
+    private Elevator elevator = Elevator.getInstance();
 
     private XboxGamepad oiDriver = OI.getInstance().getDriver();
 
@@ -70,6 +73,8 @@ public class Telemetry {
         _two = _modules.getSubTable("2");
         _three = _modules.getSubTable("3");
 
+        _elevator = main.getSubTable("Elevator");
+
         _vision = main.getSubTable("Vision");
         _targets = _vision.getSubTable("At Targets");
         _limelight = _vision.getSubTable("Limelight");
@@ -93,6 +98,17 @@ public class Telemetry {
         poseRotation.setDouble(drive.getPoseEstimatorPose2d().getRotation().getDegrees());
 
         // posePublisher = _odometry.getInstance().getStructTopic("Pose", Pose2d.struct).publish();
+    }
+
+    public void elevator() {
+        NetworkTableEntry elevatorLimitSwitchHit = _elevator.getEntry("Elevator Limit Switch Hit");
+        elevatorLimitSwitchHit.setBoolean(elevator.isLimitHit());
+
+        NetworkTableEntry elevatorSensorPosition = _elevator.getEntry("Elevator Sensor Position");
+        elevatorSensorPosition.setDouble(elevator.getPosition());
+
+        NetworkTableEntry elevatorSensorVelocity = _elevator.getEntry("Elevator Sensor Velocity");
+        elevatorSensorVelocity.setDouble(elevator.getVelocity());
     }
 
     public void debug() {

@@ -122,7 +122,10 @@ public class RobotMap
         public static final double kI = 0; // TODO
         public static final double kD = 0; // TODO
 
+        public static final double kS = 0.0;
 		public static final double kG = 0.09; // TODO
+        public static final double kV = 0.0;
+        public static final double kA = 0.0;
 
         public static final InvertedValue MASTER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
         public static final InvertedValue FOLLOWER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
@@ -131,11 +134,16 @@ public class RobotMap
         public static final int FOLLOWER_ID = 0; // TODO
         public static final int LIMIT_SWITCH_ID = 0; // TODO
 
-        public static final double STATOR_CURRENT_LIMIT = 0; // TODO A
+        public static final double STATOR_CURRENT_LIMIT = 90; // TODO 
+        public static final double SUPPLY_CURRENT_LIMIT = 90;
         public static final double FORWARD_SOFT_LIMIT = 0; // TODO rotations
         public static final double REVERSE_SOFT_LIMIT = 0; // TODO rotations
 
-        public static final double FAR_EXTENDED_DISTANCE = 0; // TODO rotations
+        public static final double ZERO_SPEED = -0.3;
+
+        public static final double ELEVATOR_STALLING_CURRENT = 80;
+
+        public static final double[] LEVEL_HEIGHTS = {0, 0, 0, 0}; // TODO rotations
 
     }
     
