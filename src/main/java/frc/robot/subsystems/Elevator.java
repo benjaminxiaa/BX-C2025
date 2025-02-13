@@ -43,6 +43,8 @@ public class Elevator extends SubsystemBase
 
         masterConfig.MotorOutput.Inverted = RobotMap.Elevator.MASTER_INVERTED;
 
+        masterConfig.Feedback.SensorToMechanismRatio = RobotMap.Elevator.ELEVATOR_GEAR_RATIO;
+
         masterConfig.Slot0.kP = RobotMap.Elevator.kP;
         masterConfig.Slot0.kG = RobotMap.Elevator.kG;
 

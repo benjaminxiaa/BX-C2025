@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,18 +15,16 @@ public class EndEffector extends SubsystemBase
     private static EndEffector instance;
     private TalonFX motor;
 
-    private DigitalInput forwardLimitSwitch;
-    private DigitalInput backwardLimitSwitch;
-
-    boolean intaking = false;
+    private Canandcolor frontCanandcolor;
+    private Canandcolor backCanandcolor;
     
     private EndEffector ()
     {
         motor = new TalonFX(RobotMap.EndEffector.ID, RobotMap.CAN_CHAIN);
         config();
 
-        forwardLimitSwitch = new DigitalInput(RobotMap.EndEffector.FORWARD_LIMIT_SWITCH_ID);
-        backwardLimitSwitch = new DigitalInput(RobotMap.EndEffector.BACKWARD_LIMIT_SWITCH_ID);
+        frontCanandcolor = new Canandcolor(RobotMap.EndEffector.CORAL_CANANDCOLOR_ID);
+        backCanandcolor = new Canandcolor(RobotMap.EndEffector.ALGAE_CANANDCOLOR_ID);
     }
 
     private void config ()
@@ -44,12 +43,6 @@ public class EndEffector extends SubsystemBase
 
         config.CurrentLimits.StatorCurrentLimit = RobotMap.EndEffector.STATOR_CURRENT_LIMIT;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = RobotMap.EndEffector.FORWARD_SOFT_LIMIT;
-        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = RobotMap.EndEffector.REVERSE_SOFT_LIMIT;
-        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
@@ -57,34 +50,30 @@ public class EndEffector extends SubsystemBase
     }
 
     /**
-     * @return meters per second
+     * @return rotations per second
      */
     public double getSpeed ()
     {
-        return motor.getVelocity().getValueAsDouble() * RobotMap.EndEffector.ROT_TO_METERS;
+        return motor.getVelocity().getValueAsDouble();
     }
 
     /**
-     * @param speed meters per second
+     * @param speed rotations per second
      */
     public void setSpeed (double speed)
     {
-        motor.setControl(new VelocityVoltage(speed / RobotMap.EndEffector.ROT_TO_METERS));
+        motor.setControl(new VelocityVoltage(speed));
     }
 
-    public boolean intakeStop ()
+    public boolean hasCoral ()
     {
-        return forwardLimitSwitch.get() && !backwardLimitSwitch.get();
+        return frontCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT
+            && backCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT;
     }
 
-    public boolean hasNoCoral ()
+    public boolean hasAlgae ()
     {
-        return !forwardLimitSwitch.get() && !backwardLimitSwitch.get();
-    }
-
-    @Override
-    public void periodic() 
-    {
+        return frontCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT;
     }
 
     public static EndEffector getInstance ()

@@ -69,7 +69,7 @@ public class RobotMap
         public static final double ROT_LOWER_LIMIT_TIME = 0.1;
 
         // gear ratios
-        public static final double TRANSLATION_GEAR_RATIO = 6.12;
+        public static final double TRANSLATION_GEAR_RATIO = 6.696;
         public static final double ROTATION_GEAR_RATIO = 150.0 / 7.0; 
         // diameter of the wheel
         public static final double WHEEL_DIAMETER = Units.inchesToMeters(4.0); // meters
@@ -130,8 +130,8 @@ public class RobotMap
         public static final InvertedValue MASTER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
         public static final InvertedValue FOLLOWER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
 
-        public static final int MASTER_ID = 0; // TODO
-        public static final int FOLLOWER_ID = 0; // TODO
+        public static final int MASTER_ID = 14;
+        public static final int FOLLOWER_ID = 15;
         public static final int LIMIT_SWITCH_ID = 0; // TODO
 
         public static final double STATOR_CURRENT_LIMIT = 90; // TODO 
@@ -143,26 +143,44 @@ public class RobotMap
 
         public static final double ELEVATOR_STALLING_CURRENT = 80;
 
+        public static final double ELEVATOR_GEAR_RATIO = 6.22; // TODO
+
         public static final double[] LEVEL_HEIGHTS = {0, 0, 0, 0}; // TODO rotations
 
     }
     
-    public static final class EndEffector
+    public static final class EndEffector // positive output = out, negative = in
     {
-        public static final int ID = 0; // TODO
+        public static final int ID = 16; // TODO
         public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
-        public static final int FORWARD_LIMIT_SWITCH_ID = 0; // TODO
-        public static final int BACKWARD_LIMIT_SWITCH_ID = 0; // TODO
-        public static final double ROT_TO_METERS = 0; // TODO
+        public static final int CORAL_CANANDCOLOR_ID = 0; // TODO
+        public static final int ALGAE_CANANDCOLOR_ID = 0; // TODO
 
-        public static final double kP = 0; // TODO
+        public static final double kP = 1; // TODO
         public static final double kI = 0; // TODO
         public static final double kD = 0; // TODO
 
         public static final double STATOR_CURRENT_LIMIT = 0; // TODO A
-        public static final double FORWARD_SOFT_LIMIT = 0; // TODO rotations
-        public static final double REVERSE_SOFT_LIMIT = 0; // TODO rotations
 
-        public static final double ROLLER_SPEED = 0; // TODO meters / second
+        public static final double PROXIMITY_LIMIT = 0.2; // TODO
+
+        public static final double INTAKE_SPEED = 0.4;
+        public static final double OUTTAKE_SPEED = -0.3;
+
+        public static final double ALGAE_HOLD_SPEED = 0.1;
+    }
+
+    public static final class Climb {
+        public static final int ID = 0; // TODO
+
+        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
+
+        public static final double CLIMB_GEAR_RATIO = 23.7;
+        
+        public static final double kP = 1; // TODO
+
+        public static final double STATOR_CURRENT_LIMIT = 90; // TODO
+
+        public static final double SUPPLY_CURRENT_LIMIT = 90; // TODO
     }
 }
