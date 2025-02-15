@@ -289,6 +289,7 @@ public class Telemetry {
 
         debug();
         odometry();
+        elevator();
 
         inst.flushLocal();
         inst.flush();

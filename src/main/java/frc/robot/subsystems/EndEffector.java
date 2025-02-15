@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -62,13 +63,14 @@ public class EndEffector extends SubsystemBase
      */
     public void setSpeed (double speed)
     {
-        motor.setControl(new VelocityVoltage(speed));
+        // motor.setControl(new VelocityVoltage(speed));
+        motor.setControl(new DutyCycleOut(speed));
     }
 
     public boolean hasCoral ()
     {
         return frontCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT
-            && backCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT;
+            || backCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT;
     }
 
     public boolean hasAlgae ()

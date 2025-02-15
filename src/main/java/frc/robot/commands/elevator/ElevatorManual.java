@@ -14,11 +14,13 @@ public class ElevatorManual extends Command {
     @Override
     public void execute() {
         if (OI.getInstance().getDriver().getUpDPadButtonState()) {
-            Elevator.getInstance().moveToPosition(Elevator.getInstance().getPosition()+2);
+            // Elevator.getInstance().moveToPosition(Elevator.getInstance().getPosition()+2);
+            Elevator.getInstance().setElevatorPower(0.1);
         }
         else if (OI.getInstance().getDriver().getDownDPadButtonState())
         {
-            Elevator.getInstance().moveToPosition(Elevator.getInstance().getPosition()-2);
+            Elevator.getInstance().setElevatorPower(-0.1);
+            // Elevator.getInstance().moveToPosition(Elevator.getInstance().getPosition()-2);
         }
         else
         {

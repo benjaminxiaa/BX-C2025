@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.reduxrobotics.canand.CanandEventLoop;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -36,6 +38,7 @@ public class Robot extends TimedRobot {
       telemetry = new Telemetry();
       // telemetry.startServer();
       telemetry.swerveStates();
+      // CanandEventLoop.getInstance();
     }
 
   @Override

@@ -118,14 +118,14 @@ public class RobotMap
     {
 		public static final double MAX_ERROR = 1; // TODO rotations
 												
-		public static final double kP = 0.13; // TODO
+		public static final double kP = 2; // TODO
         public static final double kI = 0; // TODO
         public static final double kD = 0; // TODO
 
-        public static final double kS = 0.0;
-		public static final double kG = 0.09; // TODO
-        public static final double kV = 0.0;
-        public static final double kA = 0.0;
+        public static final double kS = 0.01;
+		public static final double kG = 0.34; // TODO
+        public static final double kV = 0.01;
+        public static final double kA = 0.01;
 
         public static final InvertedValue MASTER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
         public static final InvertedValue FOLLOWER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
@@ -136,8 +136,8 @@ public class RobotMap
 
         public static final double STATOR_CURRENT_LIMIT = 90; // TODO 
         public static final double SUPPLY_CURRENT_LIMIT = 90;
-        public static final double FORWARD_SOFT_LIMIT = 0; // TODO rotations
-        public static final double REVERSE_SOFT_LIMIT = 0; // TODO rotations
+        public static final double FORWARD_SOFT_LIMIT = 100; // TODO rotations
+        public static final double REVERSE_SOFT_LIMIT = 100; // TODO rotations
 
         public static final double ZERO_SPEED = -0.3;
 
@@ -145,7 +145,7 @@ public class RobotMap
 
         public static final double ELEVATOR_GEAR_RATIO = 6.22; // TODO
 
-        public static final double[] LEVEL_HEIGHTS = {0, 0, 0, 0}; // TODO rotations
+        public static final double[] LEVEL_HEIGHTS = {1.525, 3.28, 4.8, 0}; // TODO rotations
 
     }
     
@@ -153,25 +153,26 @@ public class RobotMap
     {
         public static final int ID = 16; // TODO
         public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
-        public static final int CORAL_CANANDCOLOR_ID = 0; // TODO
-        public static final int ALGAE_CANANDCOLOR_ID = 0; // TODO
+        public static final int CORAL_CANANDCOLOR_ID = 1; // TODO
+        public static final int ALGAE_CANANDCOLOR_ID = 2; // TODO
 
-        public static final double kP = 1; // TODO
+        public static final double kP = 2; // TODO
         public static final double kI = 0; // TODO
         public static final double kD = 0; // TODO
 
-        public static final double STATOR_CURRENT_LIMIT = 0; // TODO A
+        public static final double STATOR_CURRENT_LIMIT = 80; // TODO A
 
         public static final double PROXIMITY_LIMIT = 0.2; // TODO
 
         public static final double INTAKE_SPEED = 0.4;
-        public static final double OUTTAKE_SPEED = -0.3;
+        public static final double OUTTAKE_SPEED = -0.5;
+        public static final double EJECT_SPEED = 0.1;
 
         public static final double ALGAE_HOLD_SPEED = 0.1;
     }
 
     public static final class Climb {
-        public static final int ID = 0; // TODO
+        public static final int ID = 999; // TODO
 
         public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
 
