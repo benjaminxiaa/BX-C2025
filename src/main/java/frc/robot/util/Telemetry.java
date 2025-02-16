@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import frc.robot.OI;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.swerve.Drivetrain;
 
 public class Telemetry {
@@ -25,6 +26,7 @@ public class Telemetry {
 
     private static NetworkTable _drive;
     private static NetworkTable _elevator;
+    private static NetworkTable _EE;
 
     private NetworkTable _modules;
     private static NetworkTable _zero;
@@ -44,6 +46,7 @@ public class Telemetry {
 
     private Drivetrain drive = Drivetrain.getInstance();
     private Elevator elevator = Elevator.getInstance();
+    private EndEffector EE = EndEffector.getInstance();
 
     private XboxGamepad oiDriver = OI.getInstance().getDriver();
 
@@ -74,6 +77,8 @@ public class Telemetry {
         _three = _modules.getSubTable("3");
 
         _elevator = main.getSubTable("Elevator");
+
+        _EE = main.getSubTable("EE");
 
         _vision = main.getSubTable("Vision");
         _targets = _vision.getSubTable("At Targets");
@@ -109,6 +114,17 @@ public class Telemetry {
 
         NetworkTableEntry elevatorSensorVelocity = _elevator.getEntry("Elevator Sensor Velocity");
         elevatorSensorVelocity.setDouble(elevator.getVelocity());
+
+        NetworkTableEntry elevatorDesiredLevel = _elevator.getEntry("Elevator Desired Level");
+        elevatorDesiredLevel.setInteger(Elevator.getInstance().getDesiredLevel());
+    }
+    
+    public void EE() {
+        NetworkTableEntry frontCanandcolorHit = _EE.getEntry("EE Front Canandcolor Hit");
+        frontCanandcolorHit.setBoolean(EE.isFrontTriggered());
+
+        NetworkTableEntry backCanandcolorHit = _EE.getEntry("EE Back Canandcolor Hit");
+        backCanandcolorHit.setBoolean(EE.isBackTriggered());
     }
 
     public void debug() {
@@ -290,6 +306,7 @@ public class Telemetry {
         debug();
         odometry();
         elevator();
+        EE();
 
         inst.flushLocal();
         inst.flush();

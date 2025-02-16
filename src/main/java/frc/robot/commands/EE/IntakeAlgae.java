@@ -10,11 +10,11 @@ public class IntakeAlgae extends Command {
     }
 
     public void execute () {
-        EndEffector.getInstance().setSpeed(RobotMap.EndEffector.INTAKE_SPEED);
+        EndEffector.getInstance().setSpeed(RobotMap.EndEffector.INTAKE_ALGAE_SPEED);
     }
 
     public boolean isFinished () {
-        return EndEffector.getInstance().hasAlgae();
+        return EndEffector.getInstance().isFrontTriggered();
     }
 
     public void end (boolean interrupted) {

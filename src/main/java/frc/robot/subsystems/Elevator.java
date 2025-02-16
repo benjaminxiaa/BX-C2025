@@ -22,6 +22,8 @@ public class Elevator extends SubsystemBase
 
     private DigitalInput limitSwitch;
 
+    private static int desiredLevel = 2;
+
     private Elevator() 
     {
         master = new TalonFX(RobotMap.Elevator.MASTER_ID, RobotMap.CAN_CHAIN);
@@ -46,6 +48,10 @@ public class Elevator extends SubsystemBase
         masterConfig.Feedback.SensorToMechanismRatio = RobotMap.Elevator.ELEVATOR_GEAR_RATIO;
 
         masterConfig.Slot0.kP = RobotMap.Elevator.kP;
+        masterConfig.Slot0.kI = RobotMap.Elevator.kI;
+        masterConfig.Slot0.kD = RobotMap.Elevator.kD;
+
+        masterConfig.Slot0.kV = RobotMap.Elevator.kV;
         masterConfig.Slot0.kG = RobotMap.Elevator.kG;
 
         masterConfig.Voltage.PeakForwardVoltage = RobotMap.MAX_VOLTAGE;
@@ -135,11 +141,15 @@ public class Elevator extends SubsystemBase
         return master.getStatorCurrent().getValueAsDouble() >= RobotMap.Elevator.ELEVATOR_STALLING_CURRENT;
     }
 
-    // implement if need a slower speed for when the elevator is max extended to prevent wobbling
-    // public boolean isFarExtended() 
-    // {
-    //     return getPosition() > RobotMap.Elevator.LEVEL_HEIGHTS[3];
-    // }
+    public int getDesiredLevel()
+    {
+        return desiredLevel;
+    }
+
+    public void setDesiredLevel(int level)
+    {
+        desiredLevel = level;
+    }
 
     public static Elevator getInstance() 
     {

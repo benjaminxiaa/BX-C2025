@@ -19,7 +19,7 @@ public class Score extends Command {
     }
 
     public boolean isFinished () {
-        return !EndEffector.getInstance().hasAlgae() && !EndEffector.getInstance().hasCoral() && (timer.get() > 10);
+        return !EndEffector.getInstance().isFrontTriggered() && !EndEffector.getInstance().isBackTriggered() && (timer.get() > 10);
     }
 
     public void end (boolean interrupted) {

@@ -15,10 +15,7 @@ public class MoveToPosition extends Command {
     }
 
     public void execute() {
-        if (Elevator.getInstance().getPosition() > height)
-            Elevator.getInstance().setElevatorPower(-0.6);
-        else if (Elevator.getInstance().getPosition() < height)
-            Elevator.getInstance().setElevatorPower(0.6);
+        Elevator.getInstance().moveToPosition(height);
         
     }
 

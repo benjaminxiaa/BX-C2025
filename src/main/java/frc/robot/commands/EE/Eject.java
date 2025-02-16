@@ -13,9 +13,9 @@ public class Eject extends Command {
         EndEffector.getInstance().setSpeed(RobotMap.EndEffector.EJECT_SPEED);
     }
 
-    // public boolean isFinished () {
-    //     return !EndEffector.getInstance().hasAlgae() && !EndEffector.getInstance().hasCoral();
-    // }
+    public boolean isFinished () {
+        return !EndEffector.getInstance().isFrontTriggered();
+    }
 
     public void end (boolean interrupted) {
         EndEffector.getInstance().setSpeed(0);

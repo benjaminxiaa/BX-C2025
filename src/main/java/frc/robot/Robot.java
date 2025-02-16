@@ -10,9 +10,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.EE.IntakeCoral;
 import frc.robot.commands.drivetrain.SwerveManual;
 import frc.robot.commands.elevator.ElevatorManual;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.swerve.Drivetrain;
 import frc.robot.util.Telemetry;
 
@@ -34,6 +36,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
       CommandScheduler.getInstance().setDefaultCommand(Drivetrain.getInstance(), new SwerveManual());
       CommandScheduler.getInstance().setDefaultCommand(Elevator.getInstance(), new ElevatorManual());
+      CommandScheduler.getInstance().setDefaultCommand(EndEffector.getInstance(), new IntakeCoral());
       
       telemetry = new Telemetry();
       // telemetry.startServer();

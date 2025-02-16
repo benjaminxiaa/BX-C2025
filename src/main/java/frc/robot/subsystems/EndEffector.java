@@ -24,8 +24,8 @@ public class EndEffector extends SubsystemBase
         motor = new TalonFX(RobotMap.EndEffector.ID, RobotMap.CAN_CHAIN);
         config();
 
-        frontCanandcolor = new Canandcolor(RobotMap.EndEffector.CORAL_CANANDCOLOR_ID);
-        backCanandcolor = new Canandcolor(RobotMap.EndEffector.ALGAE_CANANDCOLOR_ID);
+        frontCanandcolor = new Canandcolor(RobotMap.EndEffector.FRONT_CANANDCOLOR_ID);
+        backCanandcolor = new Canandcolor(RobotMap.EndEffector.BACK_CANANDCOLOR_ID);
     }
 
     private void config ()
@@ -67,15 +67,14 @@ public class EndEffector extends SubsystemBase
         motor.setControl(new DutyCycleOut(speed));
     }
 
-    public boolean hasCoral ()
+    public boolean isBackTriggered ()
     {
-        return frontCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT
-            || backCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT;
+        return backCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT_BACK;
     }
 
-    public boolean hasAlgae ()
+    public boolean isFrontTriggered ()
     {
-        return frontCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT;
+        return frontCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT_FRONT;
     }
 
     public static EndEffector getInstance ()

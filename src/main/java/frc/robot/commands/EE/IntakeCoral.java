@@ -4,17 +4,28 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.EndEffector;
 
-public class IntakeCoral extends Command {
+public class IntakeCoral extends Command { //indefinite!
     public IntakeCoral () {
         addRequirements(EndEffector.getInstance());
     }
 
     public void execute () {
-        EndEffector.getInstance().setSpeed(-RobotMap.EndEffector.INTAKE_SPEED);
+        if (EndEffector.getInstance().isBackTriggered() && !EndEffector.getInstance().isFrontTriggered())
+        {
+            EndEffector.getInstance().setSpeed(RobotMap.EndEffector.INTAKE_CORAL_SPEED);
+        }
+        else if (!EndEffector.getInstance().isBackTriggered() && EndEffector.getInstance().isFrontTriggered())
+        {
+            EndEffector.getInstance().setSpeed(RobotMap.EndEffector.EJECT_SPEED);
+        }
+        else
+        {
+            EndEffector.getInstance().setSpeed(0);
+        }
     }
 
     public boolean isFinished () {
-        return EndEffector.getInstance().hasCoral();
+        return false;
     }
 
     public void end (boolean interrupted) {
