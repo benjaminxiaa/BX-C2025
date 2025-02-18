@@ -42,9 +42,9 @@ public class SwerveManual extends Command {
                 OI.getInstance().getDriver().getRightX(), RobotMap.OI.JOYSTICK_DEADBAND);
         
         
-        vx = scaleValues(vx, RobotMap.Drivetrain.MAX_DRIVING_SPEED); //*(RobotMap.SwerveManual.SPEED_MULTIPLIER);
-        vy = scaleValues(vy, RobotMap.Drivetrain.MAX_DRIVING_SPEED) ;//* (RobotMap.SwerveManual.SPEED_MULTIPLIER);
-        omega = scaleValues(omega, RobotMap.Drivetrain.MAX_ANGLE_VELOCITY); //* ( RobotMap.SwerveManual.SPEED_MULTIPLIER);
+        vx = scaleValues(vx, (OI.getInstance().getDriver().getLeftTrigger() > 0.5) ? RobotMap.Drivetrain.MAX_SLOW_DRIVING_SPEED : RobotMap.Drivetrain.MAX_DRIVING_SPEED); //*(RobotMap.SwerveManual.SPEED_MULTIPLIER);
+        vy = scaleValues(vy, (OI.getInstance().getDriver().getLeftTrigger() > 0.5) ? RobotMap.Drivetrain.MAX_SLOW_DRIVING_SPEED : RobotMap.Drivetrain.MAX_DRIVING_SPEED) ;//* (RobotMap.SwerveManual.SPEED_MULTIPLIER);
+        omega = scaleValues(omega, (OI.getInstance().getDriver().getLeftTrigger() > 0.5) ? RobotMap.Drivetrain.MAX_SLOW_ANGLE_VELOCITY : RobotMap.Drivetrain.MAX_ANGLE_VELOCITY); //* ( RobotMap.SwerveManual.SPEED_MULTIPLIER);
         
 
         omega = Drivetrain.getInstance().adjustPigeon(omega);

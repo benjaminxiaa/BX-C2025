@@ -107,15 +107,18 @@ public class RobotMap
         public static final double ROBOT_WIDTH = Units.inchesToMeters(28);
 
         public static final double MAX_DRIVING_SPEED = 5.0; // m/s //TODO
-        public static final double MAX_ACCELERATION = 8.5;
+        public static final double MAX_ACCELERATION = 7.5;
+        public static final double MAX_SLOW_DRIVING_SPEED = 1.0;
+        public static final double MAX_SLOW_ACCELERATION = 1.5;
         public static final double MAX_ANGLE_VELOCITY = Math.PI;
+        public static final double MAX_SLOW_ANGLE_VELOCITY = Math.PI * 0.6;
         public static final double MAX_ANGLE_ACCELERATION = MAX_ANGLE_VELOCITY / 2.0;
 
     }
 
 	public static final class Elevator 
     {
-		public static final double MAX_ERROR = 0.05; // TODO rotations
+		public static final double MAX_ERROR = 0.02; // TODO rotations
 												
 		public static final double kP = 1.5;
         public static final double kI = 0.0;
@@ -142,7 +145,7 @@ public class RobotMap
 
         public static final double ELEVATOR_GEAR_RATIO = 6.22; // TODO
 
-        public static final double[] LEVEL_HEIGHTS = {0, 1.4, 2.8, 4.8}; // TODO rotations
+        public static final double[] LEVEL_HEIGHTS = {0, 1.45, 2.85, 4.8}; // TODO rotations
 
     }
     

@@ -49,6 +49,7 @@ public class Telemetry {
     private EndEffector EE = EndEffector.getInstance();
 
     private XboxGamepad oiDriver = OI.getInstance().getDriver();
+    private XboxGamepad oiOperator = OI.getInstance().getOperator();
 
     private StructArrayPublisher<SwerveModuleState> swerveModuleStates;
     private StructArrayPublisher<SwerveModuleState> swerveModuleStpsOptmized;
@@ -115,8 +116,8 @@ public class Telemetry {
         NetworkTableEntry elevatorSensorVelocity = _elevator.getEntry("Elevator Sensor Velocity");
         elevatorSensorVelocity.setDouble(elevator.getVelocity());
 
-        NetworkTableEntry elevatorDesiredLevel = _elevator.getEntry("Elevator Desired Level");
-        elevatorDesiredLevel.setInteger(Elevator.getInstance().getDesiredLevel());
+        NetworkTableEntry elevatorDesiredPosition = _elevator.getEntry("Elevator Desired Position");
+        elevatorDesiredPosition.setDouble(Elevator.getInstance().getDesiredPosition());
     }
     
     public void EE() {
@@ -170,17 +171,17 @@ public class Telemetry {
         // NetworkTableEntry start_D = _driver.getEntry("Start");
         // start_D.setBoolean(oiDriver.getButtonStartState());
 
-        // NetworkTableEntry a = _operator.getEntry("Button A");
-        // a.setBoolean(oiOperator.getButtonAState());
+        NetworkTableEntry a = _operator.getEntry("Button A");
+        a.setBoolean(oiOperator.getButtonAState());
 
-        // NetworkTableEntry b = _operator.getEntry("Button B");
-        // b.setBoolean(oiOperator.getButtonBState());
+        NetworkTableEntry b = _operator.getEntry("Button B");
+        b.setBoolean(oiOperator.getButtonBState());
 
-        // NetworkTableEntry x = _operator.getEntry("Button X");
-        // x.setBoolean(oiOperator.getButtonXState());
+        NetworkTableEntry x = _operator.getEntry("Button X");
+        x.setBoolean(oiOperator.getButtonXState());
 
-        // NetworkTableEntry y = _operator.getEntry("Button Y");
-        // y.setBoolean(oiOperator.getButtonYState());
+        NetworkTableEntry y = _operator.getEntry("Button Y");
+        y.setBoolean(oiOperator.getButtonYState());
 
         // NetworkTableEntry leftBumper = _operator.getEntry("Left Bumper");
         // leftBumper.setBoolean(oiOperator.getLeftBumperState());

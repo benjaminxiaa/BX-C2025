@@ -6,25 +6,32 @@ import frc.robot.RobotMap;
 import frc.robot.subsystems.Elevator;
 
 public class ElevatorManual extends Command {
-    
+
     public ElevatorManual() {
         addRequirements(Elevator.getInstance());
     }
 
     @Override
     public void execute() {
-        if (OI.getInstance().getDriver().getUpDPadButtonState()) {
-            Elevator.getInstance().moveToPosition(Elevator.getInstance().getPosition()+0.2);
+        if (OI.getInstance().getOperator().getUpDPadButtonState()) {
+            Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition()+0.2);
+            Elevator.getInstance().moveToPosition();
             // Elevator.getInstance().setElevatorPower(0.1);
         }
-        else if (OI.getInstance().getDriver().getDownDPadButtonState())
+        else if (OI.getInstance().getOperator().getDownDPadButtonState())
         {
             // Elevator.getInstance().setElevatorPower(-0.1);
-            Elevator.getInstance().moveToPosition(Elevator.getInstance().getPosition()-0.2);
+            Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition()-0.2);
+            Elevator.getInstance().moveToPosition();
         }
+        // else if (OI.getInstance().getOperator().getButtonAState())
+        // {
+        //     Elevator.getInstance().setDesiredPosition(RobotMap.Elevator.LEVEL_HEIGHTS[1]);
+        // }
         else
         {
-            Elevator.getInstance().moveToPosition(Elevator.getInstance().getPosition());
+            // Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition());
+            // Elevator.getInstance().moveToPosition();
         }
     }
 

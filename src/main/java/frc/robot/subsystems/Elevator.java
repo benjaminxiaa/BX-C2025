@@ -22,7 +22,7 @@ public class Elevator extends SubsystemBase
 
     private DigitalInput limitSwitch;
 
-    private static int desiredLevel = 2;
+    private static double desiredPosition;
 
     private Elevator() 
     {
@@ -33,6 +33,8 @@ public class Elevator extends SubsystemBase
         config();
 
         limitSwitch = new DigitalInput(RobotMap.Elevator.LIMIT_SWITCH_ID);
+
+        desiredPosition = 0.0;
 
     }
 
@@ -120,9 +122,19 @@ public class Elevator extends SubsystemBase
         master.getConfigurator().setPosition(0);
     }
 
-    public void moveToPosition(double desired)
+    public void setDesiredPosition(double position)
     {
-        master.setControl(new PositionVoltage(desired));
+        desiredPosition = position;
+    }
+
+    public double getDesiredPosition()
+    {
+        return desiredPosition;
+    }
+
+    public void moveToPosition()
+    {
+        master.setControl(new PositionVoltage(desiredPosition));
     }
 
     public void resetEncoders() 
@@ -139,16 +151,6 @@ public class Elevator extends SubsystemBase
     public boolean isStalling()
     {
         return master.getStatorCurrent().getValueAsDouble() >= RobotMap.Elevator.ELEVATOR_STALLING_CURRENT;
-    }
-
-    public int getDesiredLevel()
-    {
-        return desiredLevel;
-    }
-
-    public void setDesiredLevel(int level)
-    {
-        desiredLevel = level;
     }
 
     public static Elevator getInstance() 
