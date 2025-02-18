@@ -17,7 +17,7 @@ public class MoveToPosition extends Command {
     }
 
     public boolean isFinished() {
-        return MathUtil.compareSetpoint(Elevator.getInstance().getPosition(), Elevator.getInstance().getDesiredPosition(), RobotMap.Elevator.MAX_ERROR);
+        return Elevator.getInstance().atDesired();
     }
 
     @Override

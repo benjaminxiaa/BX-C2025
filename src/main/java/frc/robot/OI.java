@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.EE.Eject;
 import frc.robot.commands.EE.IntakeAlgae;
 import frc.robot.commands.EE.IntakeCoral;
@@ -45,7 +46,11 @@ public class OI {
         // combine into one in the future?
         driver.getButtonX().onTrue(new IntakeAlgae());
 
-        driver.getRightBumper().onTrue(new Score());
+        driver.getRightBumper().onTrue(new DoOperator()
+                                    .andThen(new Score())
+                                    .andThen(new SetOperatorPosition(0))
+                                    .andThen(new DoOperator())
+                                    .andThen(new ZeroElevator()));
 
         // IMPORTANT: desired height is from 1-4 while level_heights[i] indexing is from 0-3
         // driver.getRightBumper().whileTrue(new MoveToPosition(RobotMap.Elevator.LEVEL_HEIGHTS[Elevator.getInstance().getDesiredLevel()-1]));
@@ -53,14 +58,10 @@ public class OI {
         driver.getButtonY().whileTrue(new ZeroElevator());
         driver.getButtonA().whileTrue(new DoOperator());
         
-        operator.getButtonX().whileTrue(new ZeroElevator());
+        operator.getButtonX().whileTrue(new SetOperatorPosition(0).andThen(new ZeroElevator()));
         operator.getButtonY().whileTrue(new SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[3]));
         operator.getButtonB().whileTrue(new SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[2]));
-        // operator.getButtonA().onTrue(new InstantCommand( () -> Elevator.getInstance().setDesiredPosition(RobotMap.Elevator.LEVEL_HEIGHTS[1])));
         operator.getButtonA().onTrue(new SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[1]));
-        // operator.getButtonY().onTrue(new InstantCommand(() -> Elevator.getInstance().setDesiredLevel(4)));
-        // operator.getButtonB().onTrue(new InstantCommand(() -> Elevator.getInstance().setDesiredLevel(3)));
-        // operator.getButtonA().onTrue(new InstantCommand(() -> Elevator.getInstance().setDesiredLevel(2)));
     }
 
     public static OI getInstance() {

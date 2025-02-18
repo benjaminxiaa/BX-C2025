@@ -124,6 +124,9 @@ public class Telemetry {
 
         NetworkTableEntry elevatorIsManual = _elevator.getEntry("Elevator Is Manual");
         elevatorIsManual.setBoolean(elevator.isManual());
+
+        NetworkTableEntry elevatorAtDesired = _elevator.getEntry("Elevator At Desired");
+        elevatorAtDesired.setBoolean(elevator.atDesired());
     }
     
     public void EE() {

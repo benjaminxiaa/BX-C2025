@@ -17,19 +17,14 @@ public class ElevatorManual extends Command {
             Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition()+0.2);
             Elevator.getInstance().moveToPosition();
             Elevator.getInstance().setManual(true);
-            // Elevator.getInstance().setElevatorPower(0.1);
         }
         else if (OI.getInstance().getOperator().getDownDPadButtonState())
         {
-            // Elevator.getInstance().setElevatorPower(-0.1);
             Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition()-0.2);
             Elevator.getInstance().moveToPosition();
             Elevator.getInstance().setManual(true);
         }
-        // else if (OI.getInstance().getOperator().getButtonAState())
-        // {
-        //     Elevator.getInstance().setDesiredPosition(RobotMap.Elevator.LEVEL_HEIGHTS[1]);
-        // }
+
         else
         {
             if (Elevator.getInstance().isManual())

@@ -8,10 +8,10 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
+import frc.robot.util.MathUtil;
 
 public class Elevator extends SubsystemBase 
 {
@@ -177,6 +177,11 @@ public class Elevator extends SubsystemBase
     public boolean isStalling()
     {
         return master.getStatorCurrent().getValueAsDouble() >= RobotMap.Elevator.ELEVATOR_STALLING_CURRENT;
+    }
+
+    public boolean atDesired()
+    {
+        return MathUtil.compareSetpoint(getPosition(), getDesiredPosition(), RobotMap.Elevator.MAX_ERROR);
     }
 
     public static Elevator getInstance() 

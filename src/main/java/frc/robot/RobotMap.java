@@ -118,9 +118,9 @@ public class RobotMap
 
 	public static final class Elevator 
     {
-		public static final double MAX_ERROR = 0.02; // TODO rotations
+		public static final double MAX_ERROR = 0.06; // TODO rotations
 												
-		public static final double kP = 1.5;
+		public static final double kP = 4.2;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
@@ -139,13 +139,13 @@ public class RobotMap
         public static final double FORWARD_SOFT_LIMIT = 4.8; // TODO rotations
         public static final double REVERSE_SOFT_LIMIT = -0.1; // TODO rotations
 
-        public static final double ZERO_SPEED = -0.15;
+        public static final double ZERO_SPEED = -0.1;
 
         public static final double ELEVATOR_STALLING_CURRENT = 80;
 
         public static final double ELEVATOR_GEAR_RATIO = 6.22; // TODO
 
-        public static final double[] LEVEL_HEIGHTS = {0, 1.45, 2.85, 4.8}; // TODO rotations
+        public static final double[] LEVEL_HEIGHTS = {0, 1.45, 2.85, 4.75}; // TODO rotations
 
     }
     
