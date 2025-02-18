@@ -16,6 +16,7 @@ public class ElevatorManual extends Command {
         if (OI.getInstance().getOperator().getUpDPadButtonState()) {
             Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition()+0.2);
             Elevator.getInstance().moveToPosition();
+            Elevator.getInstance().setManual(true);
             // Elevator.getInstance().setElevatorPower(0.1);
         }
         else if (OI.getInstance().getOperator().getDownDPadButtonState())
@@ -23,6 +24,7 @@ public class ElevatorManual extends Command {
             // Elevator.getInstance().setElevatorPower(-0.1);
             Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition()-0.2);
             Elevator.getInstance().moveToPosition();
+            Elevator.getInstance().setManual(true);
         }
         // else if (OI.getInstance().getOperator().getButtonAState())
         // {
@@ -30,8 +32,11 @@ public class ElevatorManual extends Command {
         // }
         else
         {
-            // Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition());
-            // Elevator.getInstance().moveToPosition();
+            if (Elevator.getInstance().isManual())
+            {
+                Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition());
+            }
+            Elevator.getInstance().moveToPosition();
         }
     }
 

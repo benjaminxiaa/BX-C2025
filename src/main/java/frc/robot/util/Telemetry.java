@@ -118,6 +118,12 @@ public class Telemetry {
 
         NetworkTableEntry elevatorDesiredPosition = _elevator.getEntry("Elevator Desired Position");
         elevatorDesiredPosition.setDouble(Elevator.getInstance().getDesiredPosition());
+
+        NetworkTableEntry elevatorOperatorDesiredPosition = _elevator.getEntry("Elevator Operator Desired Position");
+        elevatorOperatorDesiredPosition.setDouble(Elevator.getInstance().getOperatorDesiredPosition());
+
+        NetworkTableEntry elevatorIsManual = _elevator.getEntry("Elevator Is Manual");
+        elevatorIsManual.setBoolean(elevator.isManual());
     }
     
     public void EE() {

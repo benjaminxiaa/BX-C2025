@@ -24,6 +24,10 @@ public class Elevator extends SubsystemBase
 
     private static double desiredPosition;
 
+    private static double operatorDesiredPosition;
+
+    private static boolean isManual;
+
     private Elevator() 
     {
         master = new TalonFX(RobotMap.Elevator.MASTER_ID, RobotMap.CAN_CHAIN);
@@ -35,6 +39,8 @@ public class Elevator extends SubsystemBase
         limitSwitch = new DigitalInput(RobotMap.Elevator.LIMIT_SWITCH_ID);
 
         desiredPosition = 0.0;
+
+        operatorDesiredPosition = 0.0;
 
     }
 
@@ -130,6 +136,26 @@ public class Elevator extends SubsystemBase
     public double getDesiredPosition()
     {
         return desiredPosition;
+    }
+
+    public void setOperatorDesiredPosition(double position)
+    {
+        operatorDesiredPosition = position;
+    }
+
+    public double getOperatorDesiredPosition()
+    {
+        return operatorDesiredPosition;
+    }
+
+    public void setManual(boolean manual)
+    {
+        isManual = manual;
+    }
+
+    public boolean isManual()
+    {
+        return isManual;
     }
 
     public void moveToPosition()

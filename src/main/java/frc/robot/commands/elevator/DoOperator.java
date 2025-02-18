@@ -3,17 +3,14 @@ package frc.robot.commands.elevator;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.Elevator;
 
-public class SetPosition extends InstantCommand {
+public class DoOperator extends InstantCommand {
 
-    private double height;
-
-    public SetPosition(double height) {
+    public DoOperator() {
         addRequirements(Elevator.getInstance());
-        this.height = height;
     }
 
     public void execute() {
-        Elevator.getInstance().setDesiredPosition(height);
+        Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getOperatorDesiredPosition());
     }
 
     @Override
