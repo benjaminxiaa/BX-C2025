@@ -1,15 +1,24 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.RobotMap;
 import frc.robot.util.MathUtil;
 
@@ -28,6 +37,8 @@ public class Elevator extends SubsystemBase
 
     private static boolean isManual;
 
+    private SysIdRoutine sysIdRoutine;
+
     private Elevator() 
     {
         master = new TalonFX(RobotMap.Elevator.MASTER_ID, RobotMap.CAN_CHAIN);
@@ -41,7 +52,25 @@ public class Elevator extends SubsystemBase
         desiredPosition = 0.0;
 
         operatorDesiredPosition = 0.0;
+    }
 
+    private final SysIdRoutine _sysId =
+      new SysIdRoutine(
+          new SysIdRoutine.Config(
+              Volts.of(2.0).per(Second), // Use default ramp rate (1 V/s)
+              Volts.of(2.0), // Use default step voltage (7 V)
+              null, // Use default timeout (10 s)
+              // Log state with SignalLogger class
+              state -> SignalLogger.writeString("SysId_State", state.toString())),
+          new SysIdRoutine.Mechanism(
+              output -> Elevator.getInstance().setVoltage(output.in(Volts)), null, this));
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return _sysId.quasistatic(direction);
+    }
+    
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return _sysId.dynamic(direction);
     }
 
     private void config() 
@@ -123,6 +152,11 @@ public class Elevator extends SubsystemBase
         master.setControl(new DutyCycleOut(power));
     }
 
+    public void setVoltage(double power)
+    {
+        master.setControl(new VoltageOut(power));
+    }
+
     public void setSensorPosition(double position)
     {
         master.getConfigurator().setPosition(0);
@@ -183,6 +217,7 @@ public class Elevator extends SubsystemBase
     {
         return MathUtil.compareSetpoint(getPosition(), getDesiredPosition(), RobotMap.Elevator.MAX_ERROR);
     }
+    
 
     public static Elevator getInstance() 
     {

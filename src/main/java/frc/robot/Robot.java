@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.reduxrobotics.canand.CanandEventLoop;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -42,6 +43,10 @@ public class Robot extends TimedRobot {
       // telemetry.startServer();
       telemetry.swerveStates();
       // CanandEventLoop.getInstance();
+
+      // SignalLogger.setPath("/home/lvuser/logs/");
+      SignalLogger.start();
+// 
     }
 
   @Override
@@ -65,7 +70,9 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {}
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    // SignalLogger.stop();
+  }
 
   @Override
   public void disabledPeriodic() {}

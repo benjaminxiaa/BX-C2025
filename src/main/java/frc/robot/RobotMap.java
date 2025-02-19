@@ -118,14 +118,15 @@ public class RobotMap
 
 	public static final class Elevator 
     {
-		public static final double MAX_ERROR = 0.06; // TODO rotations
+		public static final double MAX_ERROR = 0.05; // TODO rotations
 												
-		public static final double kP = 4.2;
+		public static final double kP = 3.596;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-		public static final double kG = 0.36; // TODO
-        public static final double kV = 0.01;
+		public static final double kG = 0.41279; // TODO
+        public static final double kV = 0.69985;
+        public static final double kS = 0.19926;
 
         public static final InvertedValue MASTER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
         public static final InvertedValue FOLLOWER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
@@ -146,7 +147,7 @@ public class RobotMap
         public static final double ELEVATOR_GEAR_RATIO = 6.22; // TODO
 
         public static final double[] LEVEL_HEIGHTS = {0, 1.45, 2.85, 4.75}; // TODO rotations
-
+        public static final double[] ALGAE_HEIGHTS = {1.993, 3.149}; // TODO low, high
     }
     
     public static final class EndEffector // positive output = out, negative = in
