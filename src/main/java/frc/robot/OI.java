@@ -45,21 +45,19 @@ public class OI {
         // }));
 
         driver.getButtonB().onTrue(new InstantCommand(
-                () -> Drivetrain.getInstance().setPose(new Pose2d(0, 0, Rotation2d.fromDegrees(90)))));
+                () -> Drivetrain.getInstance().setPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))));
 
-        // combine into one in the future?
-        driver.getButtonX().onTrue(new IntakeAlgae());
-
-        driver.getRightBumper().onTrue(new DoOperator()
-                .andThen(new Score())
+        driver.getRightBumper().onTrue(new Score()
                 .andThen(new SetOperatorPosition(0))
                 .andThen(new DoOperator())
                 .andThen(new ZeroElevator()));
 
+        driver.getButtonX().onTrue(new Score());
+        
         driver.getLeftBumper().onTrue(new DoOperator()
-                .andThen(new IntakeAlgae())
-                .andThen(new SetOperatorPosition(0))
-                .andThen(new DoOperator()));
+                .andThen(new IntakeAlgae()));
+                // .andThen(new SetOperatorPosition(0))
+                // .andThen(new DoOperator()));
                 // .andThen(new ZeroElevator()));
 
         // IMPORTANT: desired height is from 1-4 while level_heights[i] indexing is from
@@ -68,17 +66,12 @@ public class OI {
         // MoveToPosition(RobotMap.Elevator.LEVEL_HEIGHTS[Elevator.getInstance().getDesiredLevel()-1]));
 
         driver.getButtonY().whileTrue(new ZeroElevator());
-        driver.getButtonA().whileTrue(new DoOperator());
-
-        // driver.getButtonA().whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        // driver.getButtonB().whileTrue(elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // driver.getButtonX().whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        // driver.getButtonY().whileTrue(elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // driver.getButtonA().whileTrue(new DoOperator());
 
         operator.getButtonX().onTrue(new SetOperatorPosition(0).andThen(new ZeroElevator()));
-        operator.getButtonY().onTrue(new SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[3]));
-        operator.getButtonB().onTrue(new SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[2]));
-        operator.getButtonA().onTrue(new SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[1]));
+        operator.getButtonY().onTrue(new SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[3]).andThen(new DoOperator()));
+        operator.getButtonB().onTrue(new SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[2]).andThen(new DoOperator()));
+        operator.getButtonA().onTrue(new SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[1]).andThen(new DoOperator()));
 
         operator.getLeftBumper().onTrue(new SetOperatorPosition(RobotMap.Elevator.ALGAE_HEIGHTS[0]));
         operator.getRightBumper().onTrue(new SetOperatorPosition(RobotMap.Elevator.ALGAE_HEIGHTS[1]));

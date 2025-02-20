@@ -61,6 +61,7 @@ public class Drivetrain extends SubsystemBase {
         initPigeon();
 
         // initialize locations of swerve modules relative to robot (fl, fr, bl, br)
+        // weird ids so fr --> fl, bl --> fr, br --> bl, fl --> bl
         kinematics = new SwerveDriveKinematics(
                 new Translation2d(RobotMap.Drivetrain.ROBOT_LENGTH / 2, RobotMap.Drivetrain.ROBOT_WIDTH / 2),
                 new Translation2d(RobotMap.Drivetrain.ROBOT_LENGTH / 2, -RobotMap.Drivetrain.ROBOT_WIDTH / 2),
@@ -90,9 +91,9 @@ public class Drivetrain extends SubsystemBase {
         Pigeon2Configuration pigeonConfigs = new Pigeon2Configuration();
         pigeonConfigs.MountPose.MountPosePitch = 0;
         pigeonConfigs.MountPose.MountPoseRoll = 0;
-        pigeonConfigs.MountPose.MountPoseYaw = 0;
+        pigeonConfigs.MountPose.MountPoseYaw = 180;
         pigeonConfigs.Pigeon2Features.EnableCompass = false;
-        pigeon.getYaw().setUpdateFrequency(250);
+        // pigeon.getYaw().setUpdateFrequency(250);
 
         pigeon.getConfigurator().apply(pigeonConfigs);
     }
@@ -122,34 +123,6 @@ public class Drivetrain extends SubsystemBase {
         double pitch = pigeon.getPitch().getValueAsDouble();
         return pitch;
     }
-
-    // public void setTranslationkP(double newkP) {
-    // SmartDashboard.putNumber("newTranslationkP", newkP);
-    // for(int i = 0; i<4;i++) {
-    // swerveModules[i].setTranslationkP(newkP);
-    // }
-    // }
-
-    // public void setTranslationkI(double newkI) {
-    // SmartDashboard.putNumber("newTranslationkI", newkI);
-    // for(int i = 0; i<4;i++) {
-    // swerveModules[i].setTranslationkI(newkI);
-    // }
-    // }
-
-    // public void setTranslationkD(double newkD) {
-    // SmartDashboard.putNumber("newTranslationkD", newkD);
-    // for(int i = 0; i<4;i++) {
-    // swerveModules[i].setTranslationkD(newkD);
-    // }
-    // }
-
-    // public void setRotationkP(double newkP) {
-    // SmartDashboard.putNumber("newTranslationkP", newkP);
-    // for(int i = 0; i<4;i++) {
-    // swerveModules[i].setRotationkP(newkP);
-    // }
-    // }
 
     public boolean robotCentric() {
         return robotCentric;

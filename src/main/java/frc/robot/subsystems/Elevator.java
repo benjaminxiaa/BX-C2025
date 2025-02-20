@@ -159,7 +159,7 @@ public class Elevator extends SubsystemBase
 
     public void setSensorPosition(double position)
     {
-        master.getConfigurator().setPosition(0);
+        master.getConfigurator().setPosition(position);
     }
 
     public void setDesiredPosition(double position)

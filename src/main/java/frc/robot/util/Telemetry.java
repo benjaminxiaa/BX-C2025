@@ -97,11 +97,18 @@ public class Telemetry {
     }
 
     public void odometry() {
+        Pose2d pigeonPose2d = Drivetrain.getInstance().getPoseEstimatorPose2d();
+
         NetworkTableEntry rotation = _odometry.getEntry("Rotation");
         rotation.setDouble(drive.getRotation().getDegrees());
 
         NetworkTableEntry poseRotation = _odometry.getEntry("Pose Rotation in Deg");
-        poseRotation.setDouble(drive.getPoseEstimatorPose2d().getRotation().getDegrees());
+        poseRotation.setDouble(pigeonPose2d.getRotation().getDegrees());
+
+        NetworkTableEntry pigeonPose = _odometry.getEntry("Pigeon Pose");
+        pigeonPose.setDoubleArray(new double[] {pigeonPose2d.getX(), pigeonPose2d.getY(), pigeonPose2d.getRotation().getDegrees()});
+
+
 
         // posePublisher = _odometry.getInstance().getStructTopic("Pose", Pose2d.struct).publish();
     }

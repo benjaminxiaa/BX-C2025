@@ -33,12 +33,12 @@ public class SwerveManual extends Command {
         // get x, y, and rotational velocities from joystick
         vx = 
             MathUtil.applyDeadband(
-                OI.getInstance().getDriver().getLeftY(), RobotMap.OI.JOYSTICK_DEADBAND);
+                OI.getInstance().getDriver().getLeftX(), RobotMap.OI.JOYSTICK_DEADBAND);
         vy = 
             MathUtil.applyDeadband(
-                -OI.getInstance().getDriver().getLeftX(), RobotMap.OI.JOYSTICK_DEADBAND);
+                OI.getInstance().getDriver().getLeftY(), RobotMap.OI.JOYSTICK_DEADBAND);
         omega =
-            -MathUtil.applyDeadband(
+            MathUtil.applyDeadband(
                 OI.getInstance().getDriver().getRightX(), RobotMap.OI.JOYSTICK_DEADBAND);
         
         
@@ -68,12 +68,12 @@ public class SwerveManual extends Command {
             Drivetrain.getInstance()
                 .setAngleAndDrive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                        vx, vy, omega, Rotation2d.fromDegrees(0)));
+                        -vy, vx, omega, Rotation2d.fromDegrees(0)));
         else
             Drivetrain.getInstance()
                 .setAngleAndDrive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                        vx, vy, omega, Drivetrain.getInstance().getRotation()));
+                        -vy, vx, omega, Drivetrain.getInstance().getRotation()));
     }
 
     /**

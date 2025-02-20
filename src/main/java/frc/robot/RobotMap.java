@@ -41,22 +41,22 @@ public class RobotMap
     {
         // id of translation motors
         // FL, FR, BL, BR
-        public static final int[] TRANSLATION_IDS = {13, 3, 9, 6};
+        public static final int[] TRANSLATION_IDS = {3, 6, 13, 9};
 
         // translation motors inverted
         public static final InvertedValue[] TRANSLATION_INVERTS = new InvertedValue[]{InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive};
 
         // ids for rotation motors
-        public static final int[] ROTATION_IDS = {11, 1, 8, 4};
+        public static final int[] ROTATION_IDS = {1, 4, 11, 8};
 
         // rotation motors inverted
         public static final InvertedValue[] ROTATION_INVERTS = {InvertedValue.Clockwise_Positive, InvertedValue.Clockwise_Positive, InvertedValue.Clockwise_Positive, InvertedValue.Clockwise_Positive};
 
         // cancoder ids
-        public static final int[] CAN_CODER_ID = {12, 2, 10, 5};
+        public static final int[] CAN_CODER_ID = {2, 5, 12, 10};
 
         // offsets of cancoders of each swerve module (in rotations)
-        public static final double[] CAN_CODER_OFFSETS = new double[]{-0.128906, 0.225098, 0.363037, -0.321289};
+        public static final double[] CAN_CODER_OFFSETS = new double[]{0.474609, -0.076904, -0.381104+0.5, -0.385742};
         // current limit constants for translation motors
         public static final double TRANS_LOWER_CURRENT_LIMIT = 40;
         public static final double TRANS_CURRENT_LIMIT = 60;
@@ -78,7 +78,7 @@ public class RobotMap
         public static final double ROT_ROT_TO_ANGLE = 360.0; // rotations to degrees
 
         // rotation kP
-        public static final double ROTATION_kP = 40; //50; // TODO
+        public static final double ROTATION_kP = 50; //50; // TODO
         public static final double ROTATION_kI = 0;
         public static final double ROTATION_kD = 0;
 
@@ -98,7 +98,7 @@ public class RobotMap
         // Pigeon ID
         public static final int PIGEON_ID = 1;
 
-        public static final double PIGEON_kP = 0.003; // TODO
+        public static final double PIGEON_kP = 0.001; // TODO
 
         public static final double MIN_OUTPUT = 0.1;
         
@@ -107,7 +107,7 @@ public class RobotMap
         public static final double ROBOT_WIDTH = Units.inchesToMeters(28);
 
         public static final double MAX_DRIVING_SPEED = 5.0; // m/s //TODO
-        public static final double MAX_ACCELERATION = 7.5;
+        public static final double MAX_ACCELERATION = 10.0;
         public static final double MAX_SLOW_DRIVING_SPEED = 1.0;
         public static final double MAX_SLOW_ACCELERATION = 1.5;
         public static final double MAX_ANGLE_VELOCITY = Math.PI;
