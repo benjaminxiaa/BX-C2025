@@ -12,13 +12,10 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.XboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.drivetrain.AutoAlign;
-import frc.robot.commands.elevator.ElevatorManual;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.util.SwerveGenerator;
@@ -42,8 +39,8 @@ public class RobotContainer {
 
     private final VisionProcessor visionProcessor;
 
-    private final XboxController driver = new XboxController(0);
-    private final XboxController operator = new XboxController(1);
+    private final CommandXboxController driver = new CommandXboxController(0);
+    private final CommandXboxController operator = new CommandXboxController(1);
 
     public final Drivetrain drivetrain = SwerveGenerator.createDrivetrain();
     private final Elevator elevator = Elevator.getInstance();
@@ -85,8 +82,8 @@ public class RobotContainer {
                 () -> {
                     // Get elevator movement from D-pad
                     double movement = 0;
-                    if (operator.getPOV() == 0) movement = 0.2;
-                    else if (operator.getPOV() == 180) movement = -0.2;
+                    if (operator.povUp().getAsBoolean()) movement = 0.2;
+                    else if (operator.povDown().getAsBoolean()) movement = -0.2;
                     
                     if (movement != 0) {
                         elevator.setDesiredPosition(elevator.getPosition() + movement);
@@ -101,7 +98,7 @@ public class RobotContainer {
             )
         );
 
-        driver.getRightBumperButton().whileTrue(new AutoAlign(drivetrain));
+        driver.rightBumper().whileTrue(new AutoAlign(drivetrain));
 
         driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
         driver.b().whileTrue(drivetrain.applyRequest(
