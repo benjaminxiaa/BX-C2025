@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.Drivetrain;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -13,15 +14,11 @@ public class AutoAlign extends Command {
     private int lockedTagId = -1;
     
     // Target values
-    private static final double TARGET_TY = 15.0; // Look slightly up at tag to be close
+    private static final double TARGET_TY = 15.0;
     
     // PID Controllers
     private final PIDController xController = new PIDController(0.03, 0, 0);
     private final PIDController rotationController = new PIDController(0.03, 0, 0);
-    
-    // Speed limits
-    private static final double MAX_TRANSLATION_SPEED = 1.0; // m/s
-    private static final double MAX_ROTATION_SPEED = 1.0; // rad/s
     
     public AutoAlign(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
@@ -76,8 +73,8 @@ public class AutoAlign extends Command {
         }
         
         // Clamp speeds
-        xSpeed = clamp(xSpeed, -MAX_TRANSLATION_SPEED, MAX_TRANSLATION_SPEED);
-        rotSpeed = clamp(rotSpeed, -MAX_ROTATION_SPEED, MAX_ROTATION_SPEED);
+        xSpeed = clamp(xSpeed, -Constants.Drive.MAX_TRANSLATION_SPEED, Constants.Drive.MAX_TRANSLATION_SPEED);
+        rotSpeed = clamp(rotSpeed, -Constants.Drive.MAX_ROTATION_SPEED, Constants.Drive.MAX_ROTATION_SPEED);
         
         // Apply control
         drivetrain.setControl(drive

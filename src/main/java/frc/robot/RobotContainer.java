@@ -15,13 +15,13 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AutoAlign;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.util.SwerveGenerator;
 
 public class RobotContainer {
     private static RobotContainer instance;
 
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = Constants.Swerve.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -37,7 +37,7 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
-    public final Drivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final Drivetrain drivetrain = SwerveGenerator.createDrivetrain();
 
     /* Path follower */
     // private final SendableChooser<Command> autoChooser;

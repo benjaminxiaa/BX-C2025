@@ -33,8 +33,8 @@ public class Robot extends TimedRobot {
       limelightSim = new LimelightSimulation(
           Constants.Vision.kCameraName,
           Constants.Vision.kRobotToCam);
-      // Add field visualization to SmartDashboard
       SmartDashboard.putData("LLField", limelightSim.getField2d());
+      SignalLogger.setPath("logs/");
     }
   }
 
@@ -82,12 +82,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    // if (m_autonomousCommand != null) {
-    // m_autonomousCommand.schedule();
-    // }
-    // }
   }
 
   @Override
@@ -129,8 +123,7 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationPeriodic() {
     if (limelightSim != null) {
-      // Update simulation with current robot pose
-      limelightSim.update(m_robotContainer.drivetrain.getPose());
+      limelightSim.update(m_robotContainer.drivetrain.getState().Pose);
     }
   }
 }
