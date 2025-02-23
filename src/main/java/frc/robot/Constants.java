@@ -10,13 +10,13 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.vision.VisionProcessor;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -34,13 +34,35 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 
 public class Constants {
     public static class Vision {
-        public static final String kCameraName = "limelight4";
-        // Cam mounted facing forward, half a meter forward of center, half a meter up
-        // from center,
-        // pitched upward.
-        public static final double camPitch = Units.degreesToRadians(30.0);
-        public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
-                new Rotation3d(0, -camPitch, 0));
+        public static final String kCamera1Name = "limelight4"; // left limelight?
+        public static final Transform3d kRobotToCam1 = new Transform3d(
+                new Translation3d(10.834, -4.82, 9.065598), // TODO
+                new Rotation3d(0, 0, 11.642)); // TODO
+
+        public static final String kCamera2Name = "limelight3"; // right limelight
+        public static final Transform3d kRobotToCam2 = new Transform3d(
+                new Translation3d(12.905, 1.715, 16.065598), // TODO
+                new Rotation3d(0, 0, 0)
+        );
+
+        // Vision processing parameters
+        public static final VisionProcessor.LimelightConfig LL4_CONFIG = new VisionProcessor.LimelightConfig(
+                kCamera1Name,
+                kRobotToCam1,
+                0.15, // minTagArea
+                1.0, // minTagSpan
+                2, // minTagCount
+                true // use MegaTag2
+        );
+
+        public static final VisionProcessor.LimelightConfig LL3_CONFIG = new VisionProcessor.LimelightConfig(
+                kCamera2Name,
+                kRobotToCam2,
+                0.15, // minTagArea
+                1.0, // minTagSpan
+                2, // minTagCount
+                false // not using MegaTag2
+        );
 
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
@@ -65,6 +87,14 @@ public class Constants {
 
         public static final double MAX_TRANSLATION_SPEED = 1.0; // m/s
         public static final double MAX_ROTATION_SPEED = 1.0; // rad/s
+
+        public static final double xAlignKP = 0.03; // TODO
+        public static final double xAlignKI = 0; // TODO
+        public static final double xAlignKD = 0; // TODO
+        
+        public static final double rotAlignKP = 0.03; // TODO
+        public static final double rotAlignKI = 0; // TODO
+        public static final double rotAlignKD = 0; // TODO
     }
 
     public static class Swerve {

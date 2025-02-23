@@ -17,8 +17,8 @@ public class AutoAlign extends Command {
     private static final double TARGET_TY = 15.0;
     
     // PID Controllers
-    private final PIDController xController = new PIDController(0.03, 0, 0);
-    private final PIDController rotationController = new PIDController(0.03, 0, 0);
+    private final PIDController xController = new PIDController(Constants.Drive.xAlignKP, Constants.Drive.xAlignKI, Constants.Drive.xAlignKD);
+    private final PIDController rotationController = new PIDController(Constants.Drive.rotAlignKP, Constants.Drive.rotAlignKI, Constants.Drive.rotAlignKD);
     
     public AutoAlign(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;

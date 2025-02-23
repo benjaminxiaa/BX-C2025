@@ -7,7 +7,6 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,6 +21,7 @@ public class Robot extends TimedRobot {
   private final boolean kUseLimelight = true;
 
   private LimelightSimulation limelightSim;
+  private LimelightSimulation limelight2Sim;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
@@ -31,9 +31,14 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     if (Utils.isSimulation()) {
       limelightSim = new LimelightSimulation(
-          Constants.Vision.kCameraName,
-          Constants.Vision.kRobotToCam);
-      SmartDashboard.putData("LLField", limelightSim.getField2d());
+          Constants.Vision.kCamera1Name,
+          Constants.Vision.kRobotToCam1);
+      limelight2Sim = new LimelightSimulation(
+          Constants.Vision.kCamera2Name,
+          Constants.Vision.kRobotToCam2);
+
+      SmartDashboard.putData("LL1Field", limelightSim.getField2d());
+      SmartDashboard.putData("LL2Field", limelight2Sim.getField2d());
       SignalLogger.setPath("logs/");
     }
   }
@@ -55,15 +60,7 @@ public class Robot extends TimedRobot {
      * specification.
      */
     if (kUseLimelight) {
-      var driveState = m_robotContainer.drivetrain.getState();
-      double headingDeg = driveState.Pose.getRotation().getDegrees();
-      double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
-
-      LimelightHelpers.SetRobotOrientation("limelight4", headingDeg, 0, 0, 0, 0, 0);
-      var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-      if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
-        m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose, llMeasurement.timestampSeconds);
-      }
+      m_robotContainer.updateVision();
     }
   }
 
