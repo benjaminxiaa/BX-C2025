@@ -26,6 +26,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
@@ -33,6 +34,11 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 
 public class Constants {
+
+    public static final String CAN_CHAIN = "rio";
+    public static final double MAX_VOLTAGE = 12;
+    public static final double ROBOT_LOOP = 0.02;
+
     public static class Vision {
         public static final String kCamera1Name = "limelight4"; // left limelight?
         public static final Transform3d kRobotToCam1 = new Transform3d(
@@ -42,8 +48,7 @@ public class Constants {
         public static final String kCamera2Name = "limelight3"; // right limelight
         public static final Transform3d kRobotToCam2 = new Transform3d(
                 new Translation3d(12.905, 1.715, 16.065598), // TODO
-                new Rotation3d(0, 0, 0)
-        );
+                new Rotation3d(0, 0, 0));
 
         // Vision processing parameters
         public static final VisionProcessor.LimelightConfig LL4_CONFIG = new VisionProcessor.LimelightConfig(
@@ -91,7 +96,7 @@ public class Constants {
         public static final double xAlignKP = 0.03; // TODO
         public static final double xAlignKI = 0; // TODO
         public static final double xAlignKD = 0; // TODO
-        
+
         public static final double rotAlignKP = 0.03; // TODO
         public static final double rotAlignKI = 0; // TODO
         public static final double rotAlignKD = 0; // TODO
@@ -221,5 +226,76 @@ public class Constants {
 
         public static final Distance kBackRightXPos = Inches.of(-14);
         public static final Distance kBackRightYPos = Inches.of(-15);
+    }
+
+    public static final class Elevator {
+        public static final double MAX_ERROR = 0.05; // TODO rotations
+
+        public static final double kP = 3.596;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+
+        public static final double kG = 0.41279; // TODO
+        public static final double kV = 0.69985;
+        public static final double kS = 0.19926;
+
+        public static final boolean MASTER_INVERTED = true; // TODO
+        public static final boolean FOLLOWER_INVERTED = true; // TODO
+
+        public static final int MASTER_ID = 14;
+        public static final int FOLLOWER_ID = 15;
+        public static final int LIMIT_SWITCH_ID = 0; // TODO
+
+        public static final double STATOR_CURRENT_LIMIT = 90; // TODO
+        public static final double SUPPLY_CURRENT_LIMIT = 90;
+        public static final double FORWARD_SOFT_LIMIT = 4.8; // TODO rotations
+        public static final double REVERSE_SOFT_LIMIT = -0.1; // TODO rotations
+
+        public static final double ZERO_SPEED = -0.1;
+
+        public static final double ELEVATOR_STALLING_CURRENT = 80;
+
+        public static final double ELEVATOR_GEAR_RATIO = 6.22; // TODO
+
+        public static final double[] LEVEL_HEIGHTS = { 0, 1.45, 2.85, 4.75 }; // TODO rotations
+        public static final double[] ALGAE_HEIGHTS = { 1.993, 3.149 }; // TODO low, high
+    }
+
+    public static final class EndEffector // positive output = out, negative = in
+    {
+        public static final int ID = 16; // TODO
+        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
+        public static final int BACK_CANANDCOLOR_ID = 1; // TODO
+        public static final int FRONT_CANANDCOLOR_ID = 2; // TODO
+
+        public static final double kP = 2; // TODO
+        public static final double kI = 0; // TODO
+        public static final double kD = 0; // TODO
+
+        public static final double STATOR_CURRENT_LIMIT = 80; // TODO A
+
+        public static final double PROXIMITY_LIMIT_FRONT = 0.23; // TODO
+        public static final double PROXIMITY_LIMIT_BACK = 0.15;
+
+        public static final double INTAKE_ALGAE_SPEED = 0.4;
+        public static final double INTAKE_CORAL_SPEED = -0.3;
+        public static final double OUTTAKE_SPEED = -0.3;
+        public static final double EJECT_SPEED = 0.1;
+
+        public static final double ALGAE_HOLD_SPEED = 0.15;
+    }
+
+    public static final class Climb {
+        public static final int ID = 999; // TODO
+
+        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
+
+        public static final double CLIMB_GEAR_RATIO = 23.7;
+
+        public static final double kP = 1; // TODO
+
+        public static final double STATOR_CURRENT_LIMIT = 90; // TODO
+
+        public static final double SUPPLY_CURRENT_LIMIT = 90; // TODO
     }
 }
