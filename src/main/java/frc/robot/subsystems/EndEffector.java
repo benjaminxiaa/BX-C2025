@@ -5,8 +5,8 @@ import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.util.HSTalonFX;
-import frc.robot.util.PIDConfig;
+import harkerrobolib.motors.HSTalonFX;
+import harkerrobolib.util.PIDConfig;
 
 public class EndEffector extends SubsystemBase {
     private static EndEffector instance;

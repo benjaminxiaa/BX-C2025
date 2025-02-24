@@ -20,9 +20,10 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.drivetrain.AutoAlign;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
-import frc.robot.util.SwerveGenerator;
+import frc.robot.subsystems.EndEffector;
+import frc.robot.subsystems.swerve.Drivetrain;
+import frc.robot.subsystems.swerve.Modules;
 import frc.robot.vision.VisionProcessor;
 
 public class RobotContainer {
@@ -46,8 +47,9 @@ public class RobotContainer {
     private final CommandXboxController driver = new CommandXboxController(0);
     private final CommandXboxController operator = new CommandXboxController(1);
 
-    public final Drivetrain drivetrain = SwerveGenerator.createDrivetrain();
+    public final Drivetrain drivetrain = Modules.createDrivetrain();
     private final Elevator elevator = Elevator.getInstance();
+    private final EndEffector endEffector = EndEffector.getInstance();
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
@@ -74,33 +76,33 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                                   // negative Y
-                                                                                                   // (forward)
+                                                                                                 // negative Y
+                                                                                                 // (forward)
                         .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                         .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with
-                                                                                    // negative X (left)
+                                                                                  // negative X (left)
                 ));
 
         elevator.setDefaultCommand(
-            new RunCommand(
-                () -> {
-                    // Get elevator movement from D-pad
-                    double movement = 0;
-                    if (operator.povUp().getAsBoolean()) movement = 0.2;
-                    else if (operator.povDown().getAsBoolean()) movement = -0.2;
-                    
-                    if (movement != 0) {
-                        elevator.setDesiredPosition(elevator.getPosition() + movement);
-                        elevator.setManual(true);
-                    } else if (elevator.isManual()) {
-                        elevator.setDesiredPosition(elevator.getPosition());
-                    }
-                    
-                    elevator.moveToPosition();
-                },
-                elevator
-            )
-        );
+                new RunCommand(
+                        () -> {
+                            // Get elevator movement from D-pad
+                            double movement = 0;
+                            if (operator.povUp().getAsBoolean())
+                                movement = 0.2;
+                            else if (operator.povDown().getAsBoolean())
+                                movement = -0.2;
+
+                            if (movement != 0) {
+                                elevator.setDesiredPosition(elevator.getPosition() + movement);
+                                elevator.setManual(true);
+                            } else if (elevator.isManual()) {
+                                elevator.setDesiredPosition(elevator.getPosition());
+                            }
+
+                            elevator.moveToPosition();
+                        },
+                        elevator));
 
         driver.rightBumper().whileTrue(new AutoAlign(drivetrain));
 
@@ -122,7 +124,8 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        drivetrain.registerTelemetry(logger::telemeterizeDrive);
+        logger.telemeterize(elevator, endEffector);
     }
 
     public void updateVision() {

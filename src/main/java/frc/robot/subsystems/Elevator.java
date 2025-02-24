@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import frc.robot.util.HSTalonFX;
-import frc.robot.util.MathUtil;
-import frc.robot.util.PIDConfig;
+import harkerrobolib.motors.HSTalonFX;
+import harkerrobolib.util.MathUtil;
+import harkerrobolib.util.PIDConfig;
 
 public class Elevator extends SubsystemBase {
     private static Elevator instance;

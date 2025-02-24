@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.hardware.*;
@@ -8,9 +8,8 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import frc.robot.Constants;
-import frc.robot.subsystems.Drivetrain;
 
-public class SwerveGenerator {
+public class Modules {
     public static final SwerveDrivetrainConstants DrivetrainConstants = new SwerveDrivetrainConstants()
             .withCANBusName(Constants.Swerve.kCANBus.getName())
             .withPigeon2Id(Constants.Swerve.kPigeonId)

@@ -1,12 +1,11 @@
-
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.PositionVoltage;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.util.HSTalonFX;
-import frc.robot.util.PIDConfig;
+import harkerrobolib.motors.HSTalonFX;
+import harkerrobolib.util.PIDConfig;
 
 public class Climb extends SubsystemBase {
     private static Climb instance;
