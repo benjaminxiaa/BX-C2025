@@ -31,6 +31,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.swerve.Modules;
 import frc.robot.vision.VisionProcessor;
+import harkerrobolib.joysticks.HSXboxController;
 
 public class RobotContainer {
     private double MaxSpeed = Constants.Swerve.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -48,8 +49,8 @@ public class RobotContainer {
 
     private final VisionProcessor visionProcessor;
 
-    private final CommandXboxController driver = new CommandXboxController(0);
-    private final CommandXboxController operator = new CommandXboxController(1);
+    private final HSXboxController driver = new HSXboxController(0);
+    private final HSXboxController operator = new HSXboxController(1);
 
     public final Drivetrain drivetrain = Modules.createDrivetrain();
     private final Elevator elevator = Elevator.getInstance();
@@ -99,9 +100,9 @@ public class RobotContainer {
                         () -> {
                             // Get elevator movement from D-pad
                             double movement = 0;
-                            if (operator.getHID().getPOV() == 0)
+                            if (operator.getUpDPadState())
                                 movement = 0.2;
-                            else if (operator.getHID().getPOV() == 180)
+                            else if (operator.getDownDPadState())
                                 movement = -0.2;
 
                             if (movement != 0) {
