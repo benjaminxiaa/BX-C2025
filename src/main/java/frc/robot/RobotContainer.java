@@ -14,7 +14,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,10 +26,9 @@ import frc.robot.commands.EE.Score;
 import frc.robot.commands.elevator.DoOperator;
 import frc.robot.commands.elevator.SetOperatorPosition;
 import frc.robot.commands.elevator.ZeroElevator;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.swerve.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
-import frc.robot.subsystems.swerve.Drivetrain;
 import frc.robot.subsystems.swerve.Modules;
 import frc.robot.vision.VisionProcessor;
 
@@ -101,9 +99,9 @@ public class RobotContainer {
                         () -> {
                             // Get elevator movement from D-pad
                             double movement = 0;
-                            if (operator.povUp().getAsBoolean())
+                            if (operator.getHID().getPOV() == 0)
                                 movement = 0.2;
-                            else if (operator.povDown().getAsBoolean())
+                            else if (operator.getHID().getPOV() == 180)
                                 movement = -0.2;
 
                             if (movement != 0) {
@@ -145,9 +143,6 @@ public class RobotContainer {
         driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-        // reset the field-centric heading on left bumper press
-        driver.b().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterizeDrive);
         logger.telemeterize(elevator, endEffector);
