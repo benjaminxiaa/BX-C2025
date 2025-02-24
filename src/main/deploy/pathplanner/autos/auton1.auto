@@ -11,83 +11,90 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "1path1"
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[1])"
+                  "pathName": "1path1"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "DoOperator"
+                  "name": "ElevatorHeight1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ZeroElevator"
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "1path2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeCoral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "1path3"
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[1])"
+                  "pathName": "1path2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "DoOperator"
+                  "name": "IntakeCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ZeroElevator"
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "1path2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeCoral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "1path3"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "1path3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElevatorHeight2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ZeroElevator"
+                }
+              }
+            ]
           }
         },
         {
@@ -95,15 +102,52 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "SetOperatorPosition(RobotMap.Elevator.LEVEL_HEIGHTS[1])"
+                  "pathName": "1path2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "DoOperator"
+                  "name": "IntakeCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ZeroElevator"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "1path3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElevatorHeight3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ZeroElevator"
                 }
               }
             ]
