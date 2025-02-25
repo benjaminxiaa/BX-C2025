@@ -262,6 +262,10 @@ public class Constants {
 
         public static final double[] LEVEL_HEIGHTS = { 0, 1.45, 2.85, 4.75 }; // TODO rotations
         public static final double[] ALGAE_HEIGHTS = { 1.993, 3.149 }; // TODO low, high
+
+        public static final double MM_CRUISE_VELOCITY = 80; // TODO rps
+        public static final double MM_ACCELERATION = 160; // TODO rps/s (0.5 seconds)
+        public static final double MM_JERK = 1600; // TODO rps/s/s (0.1 seconds)
     }
 
     public static final class EndEffector // positive output = out, negative = in

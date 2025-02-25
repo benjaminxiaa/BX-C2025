@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
+import com.reduxrobotics.sensors.canandcolor.CanandcolorSettings;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -24,6 +25,15 @@ public class EndEffector extends SubsystemBase {
 
         frontCanandcolor = new Canandcolor(Constants.EndEffector.FRONT_CANANDCOLOR_ID);
         backCanandcolor = new Canandcolor(Constants.EndEffector.BACK_CANANDCOLOR_ID);
+        configCanandcolors();
+    }
+
+    private void configCanandcolors() {
+        CanandcolorSettings settings = new CanandcolorSettings();
+        settings.setLampLEDBrightness(0);
+        settings.setProximityFramePeriod(0.005);
+        frontCanandcolor.setSettings(settings);
+        backCanandcolor.setSettings(settings);
     }
 
     /**

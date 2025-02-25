@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 
@@ -43,6 +44,7 @@ public class Elevator extends SubsystemBase {
                         .setPIDConfig(0,
                                 new PIDConfig(Constants.Elevator.kP, Constants.Elevator.kI, Constants.Elevator.kD, 0,
                                         Constants.Elevator.kV, 0, Constants.Elevator.kG))
+                        .setMotionMagicConfig(Constants.Elevator.MM_CRUISE_VELOCITY, Constants.Elevator.MM_ACCELERATION, Constants.Elevator.MM_JERK)
                         .setForwardSoftLimitThreshold(Constants.Elevator.FORWARD_SOFT_LIMIT)
                         .setReverseSoftLimitThreshold(Constants.Elevator.REVERSE_SOFT_LIMIT)
                         .setSensorToMechanismRatio(Constants.Elevator.ELEVATOR_GEAR_RATIO));
@@ -136,7 +138,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveToPosition() {
-        master.setControl(new PositionVoltage(desiredPosition));
+        // master.setControl(new PositionVoltage(desiredPosition));
+        master.setControl(new MotionMagicVoltage(desiredPosition));
     }
 
     public void resetEncoders() {
