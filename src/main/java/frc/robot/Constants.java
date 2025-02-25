@@ -108,28 +108,24 @@ public class Constants {
      * GET ALL CONSTANTS FROM CTRE'S SWERVE GENERATOR
      * =========================================================================
      */
-    public static class Swerve { // ALL THESE IN THIS SUB-CLASS NEED TO BE RE-TUNED (get from running swervegenerator again)
-        // Both sets of gains need to be tuned to your individual robot.
-
-        // The steer motor uses any SwerveModule.SteerRequestType control request with
-        // the
-        // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
-        public static final Slot0Configs steerGains = new Slot0Configs() // TODO
+    public static class Swerve { // ALL THESE IN THIS SUB-CLASS NEED TO BE RE-TUNED (get from running
+                                 // swervegenerator again)
+        public static final Slot0Configs steerGains = new Slot0Configs()
                 .withKP(100).withKI(0).withKD(0.5)
-                .withKS(0.1).withKV(2.66).withKA(0)
+                .withKS(0.1).withKV(0).withKA(0.047118)
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
         // When using closed-loop control, the drive motor uses the control
         // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
-        public static final Slot0Configs driveGains = new Slot0Configs() // TODO
+        public static final Slot0Configs driveGains = new Slot0Configs()
                 .withKP(0.1).withKI(0).withKD(0)
-                .withKS(0).withKV(0.124);
+                .withKS(0.096083).withKV(0.11371).withKA(0.020463);
 
         // The closed-loop output type to use for the steer motors;
         // This affects the PID/FF gains for the steer motors
-        public static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.Voltage; // TODO
+        public static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.Voltage;
         // The closed-loop output type to use for the drive motors;
         // This affects the PID/FF gains for the drive motors
-        public static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.Voltage; // TODO
+        public static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.Voltage;
 
         // The type of motor used for the drive motor
         public static final DriveMotorArrangement kDriveMotorType = DriveMotorArrangement.TalonFX_Integrated;
@@ -138,11 +134,11 @@ public class Constants {
 
         // The remote sensor feedback type to use for the steer motors;
         // When not Pro-licensed, Fused*/Sync* automatically fall back to Remote*
-        public static final SteerFeedbackType kSteerFeedbackType = SteerFeedbackType.RemoteCANcoder;
+        public static final SteerFeedbackType kSteerFeedbackType = SteerFeedbackType.FusedCANcoder;
 
         // The stator current at which the wheels start to slip;
         // This needs to be tuned to your individual robot
-        public static final Current kSlipCurrent = Amps.of(120.0); // TODO
+        public static final Current kSlipCurrent = Amps.of(120.0);
 
         // Initial configs for the drive and steer motors and the azimuth encoder; these
         // cannot be null.
@@ -152,9 +148,10 @@ public class Constants {
         public static final TalonFXConfiguration steerInitialConfigs = new TalonFXConfiguration()
                 .withCurrentLimits(
                         new CurrentLimitsConfigs()
-                                // Swerve azimuth does not require much torque output, so we can set a
-                                // relatively low
-                                // stator current limit to help avoid brownouts without impacting performance.
+                                // Swerve azimuth does not require much torque output,
+                                // so we can set a relatively low
+                                // stator current limit to help avoid brownouts without
+                                // impacting performance.
                                 .withStatorCurrentLimit(Amps.of(60))
                                 .withStatorCurrentLimitEnable(true));
         public static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
@@ -163,22 +160,22 @@ public class Constants {
 
         // CAN bus that the devices are located on;
         // All swerve devices must share the same CAN bus
-        public static final CANBus kCANBus = new CANBus("rio");
+        public static final CANBus kCANBus = new CANBus("rio", "/home/lvuser/logs");
 
         // Theoretical free speed (m/s) at 12 V applied output;
         // This needs to be tuned to your individual robot
-        public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(9.53); // TODO
+        public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(8.94);
 
         // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
         // This may need to be tuned to your individual robot
-        public static final double kCoupleRatio = 0; // TODO
+        public static final double kCoupleRatio = 0;
 
-        public static final double kDriveGearRatio = 6.696;
-        public static final double kSteerGearRatio = 21.42;
+        public static final double kDriveGearRatio = 7.14;
+        public static final double kSteerGearRatio = 21.429;
         public static final Distance kWheelRadius = Inches.of(4);
 
-        public static final boolean kInvertLeftSide = false; // TODO
-        public static final boolean kInvertRightSide = true; // TODO
+        public static final boolean kInvertLeftSide = true;
+        public static final boolean kInvertRightSide = false;
 
         public static final int kPigeonId = 1;
 
@@ -191,44 +188,44 @@ public class Constants {
 
         // Front Left
         public static final int kFrontLeftDriveMotorId = 3;
-        public static final int kFrontLeftSteerMotorId = 2;
-        public static final int kFrontLeftEncoderId = 1;
-        public static final Angle kFrontLeftEncoderOffset = Rotations.of(0.031982421875); // TODO
-        public static final boolean kFrontLeftSteerMotorInverted = false;
-        public static final boolean kFrontLeftEncoderInverted = true;
+        public static final int kFrontLeftSteerMotorId = 1;
+        public static final int kFrontLeftEncoderId = 2;
+        public static final Angle kFrontLeftEncoderOffset = Rotations.of(0.028564453125);
+        public static final boolean kFrontLeftSteerMotorInverted = true;
+        public static final boolean kFrontLeftEncoderInverted = false;
 
         public static final Distance kFrontLeftXPos = Inches.of(14);
         public static final Distance kFrontLeftYPos = Inches.of(15);
 
         // Front Right
-        public static final int kFrontRightDriveMotorId = 1;
-        public static final int kFrontRightSteerMotorId = 0;
-        public static final int kFrontRightEncoderId = 0;
-        public static final Angle kFrontRightEncoderOffset = Rotations.of(0.167236328125); // TODO
-        public static final boolean kFrontRightSteerMotorInverted = false;
-        public static final boolean kFrontRightEncoderInverted = true;
+        public static final int kFrontRightDriveMotorId = 6;
+        public static final int kFrontRightSteerMotorId = 4;
+        public static final int kFrontRightEncoderId = 5;
+        public static final Angle kFrontRightEncoderOffset = Rotations.of(0.06689453125);
+        public static final boolean kFrontRightSteerMotorInverted = true;
+        public static final boolean kFrontRightEncoderInverted = false;
 
         public static final Distance kFrontRightXPos = Inches.of(14);
         public static final Distance kFrontRightYPos = Inches.of(-15);
 
         // Back Left
-        public static final int kBackLeftDriveMotorId = 7;
-        public static final int kBackLeftSteerMotorId = 6;
-        public static final int kBackLeftEncoderId = 3;
-        public static final Angle kBackLeftEncoderOffset = Rotations.of(-0.116943359375); // TODO
-        public static final boolean kBackLeftSteerMotorInverted = false;
-        public static final boolean kBackLeftEncoderInverted = true;
+        public static final int kBackLeftDriveMotorId = 13;
+        public static final int kBackLeftSteerMotorId = 11;
+        public static final int kBackLeftEncoderId = 12;
+        public static final Angle kBackLeftEncoderOffset = Rotations.of(0.379150390625);
+        public static final boolean kBackLeftSteerMotorInverted = true;
+        public static final boolean kBackLeftEncoderInverted = false;
 
         public static final Distance kBackLeftXPos = Inches.of(-14);
         public static final Distance kBackLeftYPos = Inches.of(15);
 
         // Back Right
-        public static final int kBackRightDriveMotorId = 5;
-        public static final int kBackRightSteerMotorId = 4;
-        public static final int kBackRightEncoderId = 2;
-        public static final Angle kBackRightEncoderOffset = Rotations.of(0.013427734375); // TODO
-        public static final boolean kBackRightSteerMotorInverted = false;
-        public static final boolean kBackRightEncoderInverted = true;
+        public static final int kBackRightDriveMotorId = 9;
+        public static final int kBackRightSteerMotorId = 8;
+        public static final int kBackRightEncoderId = 10;
+        public static final Angle kBackRightEncoderOffset = Rotations.of(0.38525390625);
+        public static final boolean kBackRightSteerMotorInverted = true;
+        public static final boolean kBackRightEncoderInverted = false;
 
         public static final Distance kBackRightXPos = Inches.of(-14);
         public static final Distance kBackRightYPos = Inches.of(-15);

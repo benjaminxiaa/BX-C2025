@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    SignalLogger.stop();
+    // 
   }
 
   @Override
@@ -62,6 +62,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledExit() {
+    // SignalLogger.stop();
   }
 
   @Override
