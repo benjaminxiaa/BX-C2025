@@ -23,6 +23,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -156,7 +157,7 @@ public class Constants {
                                 .withStatorCurrentLimitEnable(true));
         public static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
         // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
-        public static final Pigeon2Configuration pigeonConfigs = new Pigeon2Configuration();
+        public static final Pigeon2Configuration pigeonConfigs = new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(180));
 
         // CAN bus that the devices are located on;
         // All swerve devices must share the same CAN bus
@@ -293,7 +294,7 @@ public class Constants {
     }
 
     public static final class Climb {
-        public static final int ID = 999; // TODO
+        public static final int ID = 17;
 
         public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
 
