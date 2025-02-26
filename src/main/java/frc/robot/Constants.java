@@ -112,13 +112,13 @@ public class Constants {
     public static class Swerve { // ALL THESE IN THIS SUB-CLASS NEED TO BE RE-TUNED (get from running
                                  // swervegenerator again)
         public static final Slot0Configs steerGains = new Slot0Configs()
-                .withKP(100).withKI(0).withKD(0.5)
+                .withKP(50).withKI(0).withKD(0.5)
                 .withKS(0.1).withKV(0).withKA(0.047118)
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
         // When using closed-loop control, the drive motor uses the control
         // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
         public static final Slot0Configs driveGains = new Slot0Configs()
-                .withKP(0.1).withKI(0).withKD(0)
+                .withKP(1).withKI(0).withKD(0)
                 .withKS(0.096083).withKV(0.11371).withKA(0.020463);
 
         // The closed-loop output type to use for the steer motors;
@@ -175,8 +175,8 @@ public class Constants {
         public static final double kSteerGearRatio = 21.429;
         public static final Distance kWheelRadius = Inches.of(4);
 
-        public static final boolean kInvertLeftSide = true;
-        public static final boolean kInvertRightSide = false;
+        public static final boolean kInvertLeftSide = false;
+        public static final boolean kInvertRightSide = true;
 
         public static final int kPigeonId = 1;
 
@@ -235,9 +235,9 @@ public class Constants {
     public static final class Elevator {
         public static final double MAX_ERROR = 0.05; // TODO rotations
 
-        public static final double kP = 3.596;
-        public static final double kI = 0.0;
-        public static final double kD = 0.0;
+        public static final double kP = 20;
+        public static final double kI = 0; //1;
+        public static final double kD = 0; //1;
 
         public static final double kG = 0.41279; // TODO
         public static final double kV = 0.69985;
@@ -264,9 +264,9 @@ public class Constants {
         public static final double[] LEVEL_HEIGHTS = { 0, 1.45, 2.85, 4.75 }; // TODO rotations
         public static final double[] ALGAE_HEIGHTS = { 1.993, 3.149 }; // TODO low, high
 
-        public static final double MM_CRUISE_VELOCITY = 80; // TODO rps
-        public static final double MM_ACCELERATION = 160; // TODO rps/s (0.5 seconds)
-        public static final double MM_JERK = 1600; // TODO rps/s/s (0.1 seconds)
+        public static final double MM_CRUISE_VELOCITY = 10; // TODO rps
+        public static final double MM_ACCELERATION = 50; // TODO rps/s
+        public static final double MM_JERK = 100; // TODO rps/s/s
     }
 
     public static final class EndEffector // positive output = out, negative = in

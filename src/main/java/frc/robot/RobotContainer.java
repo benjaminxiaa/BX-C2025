@@ -105,11 +105,13 @@ public class RobotContainer {
                             if (movement != 0) {
                                 elevator.setDesiredPosition(elevator.getPosition() + movement);
                                 elevator.setManual(true);
-                            } else if (elevator.isManual()) {
-                                elevator.setDesiredPosition(elevator.getPosition());
+                                elevator.moveToPosition();
+                            } else {
+                                if (elevator.isManual()) {
+                                    elevator.setDesiredPosition(elevator.getPosition());
+                                }
+                                elevator.moveToPosition();
                             }
-
-                            elevator.moveToPosition();
                         },
                         elevator));
 
@@ -144,10 +146,16 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterizeDrive);
         logger.telemeterize(elevator, endEffector);
+        updateTelemetry();
+    }
+
+    public void updateTelemetry() {
+        logger.telemeterize(elevator, endEffector);
     }
 
     public void updateVision() {
         visionProcessor.update();
+
     }
 
     public Command getAutonomousCommand() {
