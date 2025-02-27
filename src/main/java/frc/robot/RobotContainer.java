@@ -23,8 +23,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.EE.IntakeAlgae;
 import frc.robot.commands.EE.IntakeCoral;
 import frc.robot.commands.EE.Score;
-import frc.robot.commands.elevator.DoOperator;
-import frc.robot.commands.elevator.SetOperatorPosition;
+import frc.robot.commands.elevator.MoveToPosition;
 import frc.robot.commands.elevator.ZeroElevator;
 import frc.robot.subsystems.swerve.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -62,11 +61,11 @@ public class RobotContainer {
         NamedCommands.registerCommand("ZeroElevator", new ZeroElevator());
         NamedCommands.registerCommand("IntakeCoral", new IntakeCoral());
         NamedCommands.registerCommand("ElevatorHeight1",
-                new SetOperatorPosition(Constants.Elevator.LEVEL_HEIGHTS[1]).andThen(new DoOperator()));
+                new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[1]));
         NamedCommands.registerCommand("ElevatorHeight2",
-                new SetOperatorPosition(Constants.Elevator.LEVEL_HEIGHTS[2]).andThen(new DoOperator()));
+                new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[2]));
         NamedCommands.registerCommand("ElevatorHeight3",
-                new SetOperatorPosition(Constants.Elevator.LEVEL_HEIGHTS[3]).andThen(new DoOperator()));
+                new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[3]));
         NamedCommands.registerCommand("Score", new Score());
 
         autoChooser = AutoBuilder.buildAutoChooser("auton1");
@@ -119,23 +118,22 @@ public class RobotContainer {
         driver.b().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         driver.rightBumper().onTrue(new Score()
-                .andThen(new SetOperatorPosition(0)
-                        .andThen(new DoOperator())
+                .andThen(new MoveToPosition(0)
                         .andThen(new ZeroElevator())));
 
         driver.x().onTrue(new Score());
 
-        driver.leftBumper().onTrue(new DoOperator().andThen(new IntakeAlgae()));
+        driver.leftBumper().onTrue(new IntakeAlgae());
 
         driver.y().whileTrue(new ZeroElevator());
 
-        operator.x().onTrue(new SetOperatorPosition(0).andThen(new ZeroElevator()));
-        operator.y().onTrue(new SetOperatorPosition(Constants.Elevator.LEVEL_HEIGHTS[3]).andThen(new DoOperator()));
-        operator.b().onTrue(new SetOperatorPosition(Constants.Elevator.LEVEL_HEIGHTS[2]).andThen(new DoOperator()));
-        operator.a().onTrue(new SetOperatorPosition(Constants.Elevator.LEVEL_HEIGHTS[1]).andThen(new DoOperator()));
+        operator.x().onTrue(new MoveToPosition(0).andThen(new ZeroElevator()));
+        operator.y().onTrue(new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[3]));
+        operator.b().onTrue(new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[2]));
+        operator.a().onTrue(new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[1]));
 
-        operator.leftBumper().onTrue(new SetOperatorPosition(Constants.Elevator.ALGAE_HEIGHTS[0]));
-        operator.rightBumper().onTrue(new SetOperatorPosition(Constants.Elevator.ALGAE_HEIGHTS[1]));
+        operator.leftBumper().onTrue(new MoveToPosition(Constants.Elevator.ALGAE_HEIGHTS[0]));
+        operator.rightBumper().onTrue(new MoveToPosition(Constants.Elevator.ALGAE_HEIGHTS[1]));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.

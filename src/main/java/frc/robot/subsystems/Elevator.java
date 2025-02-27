@@ -29,7 +29,7 @@ public class Elevator extends SubsystemBase {
 
     private static double desiredPosition;
 
-    private static double operatorDesiredPosition;
+    // private static double operatorDesiredPosition;
 
     private static boolean isManual;
 
@@ -56,7 +56,7 @@ public class Elevator extends SubsystemBase {
 
         desiredPosition = 0.0;
 
-        operatorDesiredPosition = 0.0;
+        // operatorDesiredPosition = 0.0;
     }
 
     private final SysIdRoutine _sysId = new SysIdRoutine(
@@ -121,13 +121,13 @@ public class Elevator extends SubsystemBase {
         return desiredPosition;
     }
 
-    public void setOperatorDesiredPosition(double position) {
-        operatorDesiredPosition = position;
-    }
+    // public void setOperatorDesiredPosition(double position) {
+    //     operatorDesiredPosition = position;
+    // }
 
-    public double getOperatorDesiredPosition() {
-        return operatorDesiredPosition;
-    }
+    // public double getOperatorDesiredPosition() {
+    //     return operatorDesiredPosition;
+    // }
 
     public void setManual(boolean manual) {
         isManual = manual;
@@ -156,7 +156,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atDesired() {
-        return MathUtil.compareSetpoint(getPosition(), getDesiredPosition(), Constants.Elevator.MAX_ERROR);
+        return MathUtil.compareSetpoint(getPosition(), desiredPosition, Constants.Elevator.MAX_ERROR);
     }
 
     public static Elevator getInstance() {
