@@ -111,13 +111,11 @@ public class RobotContainer {
         endEffector.setDefaultCommand(
                 new RunCommand(
                     () -> {
-                        // UNCOMMENT FOR CONTINUOUS INTAKE AT SLOWER SPEED
-                        // if (!endEffector.isBackTriggered() && !endEffector.isFrontTriggered())
-                        // {
-                        //     endEffector.setSpeed(Constants.EndEffector.INTAKE_CORAL_SLOW_SPEED);
-                        // }
-                        
-                        if (endEffector.isBackTriggered() && !endEffector.isFrontTriggered())
+                        if (!endEffector.isBackTriggered() && !endEffector.isFrontTriggered())
+                        {
+                            endEffector.setSpeed((endEffector.isContinuousIntake()) ? Constants.EndEffector.INTAKE_CORAL_SLOW_SPEED : 0);
+                        }
+                        else if (endEffector.isBackTriggered() && !endEffector.isFrontTriggered())
                         {
                             endEffector.setSpeed(Constants.EndEffector.INTAKE_CORAL_SPEED);
                         }
@@ -152,6 +150,8 @@ public class RobotContainer {
 
         operator.leftBumper().onTrue(new MoveToPosition(Constants.Elevator.ALGAE_HEIGHTS[0]));
         operator.rightBumper().onTrue(new MoveToPosition(Constants.Elevator.ALGAE_HEIGHTS[1]));
+
+        operator.getLeftDPad().onTrue(endEffector.runOnce(() -> endEffector.toggleContinousIntake()));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.

@@ -16,6 +16,8 @@ public class EndEffector extends SubsystemBase {
     private Canandcolor frontCanandcolor;
     private Canandcolor backCanandcolor;
 
+    private boolean continuousIntake;
+
     private EndEffector() {
         motor = new HSTalonFX(Constants.EndEffector.ID, HSTalonFX.makeDefaultConfig()
                 .setInverted(true)
@@ -26,6 +28,8 @@ public class EndEffector extends SubsystemBase {
         frontCanandcolor = new Canandcolor(Constants.EndEffector.FRONT_CANANDCOLOR_ID);
         backCanandcolor = new Canandcolor(Constants.EndEffector.BACK_CANANDCOLOR_ID);
         configCanandcolors();
+
+        continuousIntake = false; // TODO change for true for new EE
     }
 
     private void configCanandcolors() {
@@ -57,6 +61,14 @@ public class EndEffector extends SubsystemBase {
 
     public boolean isFrontTriggered() {
         return frontCanandcolor.getProximity() < Constants.EndEffector.PROXIMITY_LIMIT_FRONT;
+    }
+
+    public boolean isContinuousIntake() {
+        return continuousIntake;
+    }
+
+    public void toggleContinousIntake() {
+        continuousIntake = !continuousIntake;
     }
 
     public static EndEffector getInstance() {
