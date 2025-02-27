@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.EE.IntakeAlgae;
-import frc.robot.commands.EE.IntakeCoral;
 import frc.robot.commands.EE.Score;
 import frc.robot.commands.elevator.MoveToPosition;
 import frc.robot.commands.elevator.ZeroElevator;
@@ -59,7 +58,6 @@ public class RobotContainer {
 
     public RobotContainer() {
         NamedCommands.registerCommand("ZeroElevator", new ZeroElevator());
-        NamedCommands.registerCommand("IntakeCoral", new IntakeCoral());
         NamedCommands.registerCommand("ElevatorHeight1",
                 new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[1]));
         NamedCommands.registerCommand("ElevatorHeight2",
@@ -109,6 +107,30 @@ public class RobotContainer {
                             }
                         },
                         elevator));
+
+        endEffector.setDefaultCommand(
+                new RunCommand(
+                    () -> {
+                        // UNCOMMENT FOR CONTINUOUS INTAKE AT SLOWER SPEED
+                        // if (!endEffector.isBackTriggered() && !endEffector.isFrontTriggered())
+                        // {
+                        //     endEffector.setSpeed(Constants.EndEffector.INTAKE_CORAL_SLOW_SPEED);
+                        // }
+                        
+                        if (endEffector.isBackTriggered() && !endEffector.isFrontTriggered())
+                        {
+                            endEffector.setSpeed(Constants.EndEffector.INTAKE_CORAL_SPEED);
+                        }
+                        else if (!EndEffector.getInstance().isBackTriggered() && EndEffector.getInstance().isFrontTriggered())
+                        {
+                            endEffector.setSpeed(Constants.EndEffector.EJECT_SPEED);
+                        }
+                        else
+                        {
+                            endEffector.setSpeed(0);
+                        }
+                    },
+                    endEffector));
 
         // reset the field-centric heading on button b press
         driver.b().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
