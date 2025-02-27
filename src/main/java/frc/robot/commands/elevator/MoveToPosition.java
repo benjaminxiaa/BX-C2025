@@ -1,7 +1,9 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
+import harkerrobolib.util.MathUtil;
 
 public class MoveToPosition extends Command {
 
@@ -12,13 +14,11 @@ public class MoveToPosition extends Command {
     }
 
     public void execute() {
-        Elevator.getInstance().setDesiredPosition(height);
-        Elevator.getInstance().moveToPosition();
-        Elevator.getInstance().setManual(false);
+        Elevator.getInstance().moveToPosition(height);
     }
 
     public boolean isFinished() {
-        return Elevator.getInstance().atDesired();
+        return MathUtil.compareSetpoint(Elevator.getInstance().getPosition(), height, Constants.Elevator.MAX_ERROR);
     }
 
     @Override

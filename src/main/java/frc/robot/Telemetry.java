@@ -42,8 +42,6 @@ public class Telemetry {
     private final NetworkTable elevatorStateTable = defaultTable.getSubTable("ElevatorState");
     private final DoublePublisher elevatorSensorPosition = elevatorStateTable.getDoubleTopic("Elevator Sensor Position").publish();
     private final DoublePublisher elevatorSensorVelocity = elevatorStateTable.getDoubleTopic("Elevator Sensor Velocity").publish();
-    private final DoublePublisher elevatorSensorDesiredPos = elevatorStateTable.getDoubleTopic("Elevator Sensor Desired Position").publish();
-    private final BooleanPublisher elevatorAtDesired = elevatorStateTable.getBooleanTopic("Elevator At Desired").publish();
 
     /* End Effector State */
     private final NetworkTable endEffectorStateTable = defaultTable.getSubTable("EndEffectorState");
@@ -130,8 +128,6 @@ public class Telemetry {
     public void telemeterize(Elevator elevator, EndEffector endEffector) {
         elevatorSensorPosition.set(elevator.getPosition());
         elevatorSensorVelocity.set(elevator.getVelocity());
-        elevatorSensorDesiredPos.set(elevator.getDesiredPosition());
-        elevatorAtDesired.set(elevator.atDesired());
 
         frontCanandcolorHit.set(endEffector.isFrontTriggered());
         backCanandcolorHit.set(endEffector.isBackTriggered());

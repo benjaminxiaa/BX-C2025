@@ -102,14 +102,10 @@ public class RobotContainer {
                                 movement = -0.2;
 
                             if (movement != 0) {
-                                elevator.setDesiredPosition(elevator.getPosition() + movement);
-                                elevator.setManual(true);
-                                elevator.moveToPosition();
-                            } else {
-                                if (elevator.isManual()) {
-                                    elevator.setDesiredPosition(elevator.getPosition());
-                                }
-                                elevator.moveToPosition();
+                                elevator.moveToPosition(elevator.getPosition() + movement);
+                            } 
+                            else {
+                                elevator.moveToPosition(elevator.getPosition());
                             }
                         },
                         elevator));

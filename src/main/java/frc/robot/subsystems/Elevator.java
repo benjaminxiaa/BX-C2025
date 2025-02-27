@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import harkerrobolib.motors.HSTalonFX;
-import harkerrobolib.util.MathUtil;
 import harkerrobolib.util.PIDConfig;
 
 public class Elevator extends SubsystemBase {
@@ -26,12 +25,6 @@ public class Elevator extends SubsystemBase {
     private HSTalonFX follower;
 
     private DigitalInput limitSwitch;
-
-    private static double desiredPosition;
-
-    // private static double operatorDesiredPosition;
-
-    private static boolean isManual;
 
     private Elevator() {
         // master = new TalonFX(Constants.Elevator.MASTER_ID, Constants.CAN_CHAIN);
@@ -53,10 +46,6 @@ public class Elevator extends SubsystemBase {
                 HSTalonFX.makeDefaultConfig().setInverted(Constants.Elevator.FOLLOWER_INVERTED));
 
         limitSwitch = new DigitalInput(Constants.Elevator.LIMIT_SWITCH_ID);
-
-        desiredPosition = 0.0;
-
-        // operatorDesiredPosition = 0.0;
     }
 
     private final SysIdRoutine _sysId = new SysIdRoutine(
@@ -113,31 +102,7 @@ public class Elevator extends SubsystemBase {
         master.setSensorPosition(position);
     }
 
-    public void setDesiredPosition(double position) {
-        desiredPosition = position;
-    }
-
-    public double getDesiredPosition() {
-        return desiredPosition;
-    }
-
-    // public void setOperatorDesiredPosition(double position) {
-    //     operatorDesiredPosition = position;
-    // }
-
-    // public double getOperatorDesiredPosition() {
-    //     return operatorDesiredPosition;
-    // }
-
-    public void setManual(boolean manual) {
-        isManual = manual;
-    }
-
-    public boolean isManual() {
-        return isManual;
-    }
-
-    public void moveToPosition() {
+    public void moveToPosition(double desiredPosition) {
         // master.setControl(new PositionVoltage(desiredPosition));
         master.setControl(new MotionMagicVoltage(desiredPosition));
     }
@@ -155,9 +120,9 @@ public class Elevator extends SubsystemBase {
         return master.getStatorCurrent() >= Constants.Elevator.ELEVATOR_STALLING_CURRENT;
     }
 
-    public boolean atDesired() {
-        return MathUtil.compareSetpoint(getPosition(), desiredPosition, Constants.Elevator.MAX_ERROR);
-    }
+    // public boolean atDesired() {
+    //     return MathUtil.compareSetpoint(getPosition(), desiredPosition, Constants.Elevator.MAX_ERROR);
+    // }
 
     public static Elevator getInstance() {
         if (instance == null) {

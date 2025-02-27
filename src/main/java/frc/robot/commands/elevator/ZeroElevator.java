@@ -11,7 +11,6 @@ public class ZeroElevator extends Command {
 
     public void execute() {
         Elevator.getInstance().setElevatorPower(Constants.Elevator.ZERO_SPEED);
-        Elevator.getInstance().setManual(true);
     }
 
     public boolean isFinished() {
