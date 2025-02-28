@@ -1,8 +1,7 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.OI;
-import frc.robot.RobotMap;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Elevator;
 
 public class ElevatorManual extends Command {
@@ -13,25 +12,17 @@ public class ElevatorManual extends Command {
 
     @Override
     public void execute() {
-        if (OI.getInstance().getOperator().getUpDPadButtonState()) {
-            Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition()+0.2);
-            Elevator.getInstance().moveToPosition();
-            Elevator.getInstance().setManual(true);
+        if (RobotContainer.getInstance().getOperator().getUpDPadState()) {
+            Elevator.getInstance().moveToPosition(Elevator.getInstance().getPosition()+0.2);
         }
-        else if (OI.getInstance().getOperator().getDownDPadButtonState())
+        else if (RobotContainer.getInstance().getOperator().getDownDPadState())
         {
-            Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition()-0.2);
-            Elevator.getInstance().moveToPosition();
-            Elevator.getInstance().setManual(true);
+            Elevator.getInstance().moveToPosition(Elevator.getInstance().getPosition()-0.2);
         }
 
         else
         {
-            if (Elevator.getInstance().isManual())
-            {
-                Elevator.getInstance().setDesiredPosition(Elevator.getInstance().getPosition());
-            }
-            Elevator.getInstance().moveToPosition();
+            Elevator.getInstance().moveToPosition(Elevator.getInstance().getPosition());
         }
     }
 

@@ -7,7 +7,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotMap;
+import frc.robot.Constants;
 
 public class EndEffector extends SubsystemBase 
 {
@@ -19,11 +19,11 @@ public class EndEffector extends SubsystemBase
     
     private EndEffector ()
     {
-        motor = new TalonFX(RobotMap.EndEffector.ID, RobotMap.CAN_CHAIN);
+        motor = new TalonFX(Constants.EndEffector.ID, Constants.CAN_CHAIN);
         config();
 
-        frontCanandcolor = new Canandcolor(RobotMap.EndEffector.FRONT_CANANDCOLOR_ID);
-        backCanandcolor = new Canandcolor(RobotMap.EndEffector.BACK_CANANDCOLOR_ID);
+        frontCanandcolor = new Canandcolor(Constants.EndEffector.FRONT_CANANDCOLOR_ID);
+        backCanandcolor = new Canandcolor(Constants.EndEffector.BACK_CANANDCOLOR_ID);
     }
 
     private void config ()
@@ -32,15 +32,15 @@ public class EndEffector extends SubsystemBase
 
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        config.MotorOutput.Inverted = RobotMap.EndEffector.INVERTED;
-        config.Slot0.kP = RobotMap.EndEffector.kP;
-        config.Slot0.kI = RobotMap.EndEffector.kI;
-        config.Slot0.kD = RobotMap.EndEffector.kD;
+        config.MotorOutput.Inverted = Constants.EndEffector.INVERTED;
+        config.Slot0.kP = Constants.EndEffector.kP;
+        config.Slot0.kI = Constants.EndEffector.kI;
+        config.Slot0.kD = Constants.EndEffector.kD;
 
-        config.Voltage.PeakForwardVoltage = RobotMap.MAX_VOLTAGE;
-        config.Voltage.PeakReverseVoltage = -RobotMap.MAX_VOLTAGE;
+        config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
+        config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
 
-        config.CurrentLimits.StatorCurrentLimit = RobotMap.EndEffector.STATOR_CURRENT_LIMIT;
+        config.CurrentLimits.StatorCurrentLimit = Constants.EndEffector.STATOR_CURRENT_LIMIT;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -67,12 +67,12 @@ public class EndEffector extends SubsystemBase
 
     public boolean isBackTriggered ()
     {
-        return backCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT_BACK;
+        return backCanandcolor.getProximity() < Constants.EndEffector.PROXIMITY_LIMIT_BACK;
     }
 
     public boolean isFrontTriggered ()
     {
-        return frontCanandcolor.getProximity() < RobotMap.EndEffector.PROXIMITY_LIMIT_FRONT;
+        return frontCanandcolor.getProximity() < Constants.EndEffector.PROXIMITY_LIMIT_FRONT;
     }
 
     public static EndEffector getInstance ()

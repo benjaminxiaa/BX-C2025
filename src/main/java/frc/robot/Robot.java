@@ -4,88 +4,114 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.SignalLogger;
-import com.reduxrobotics.canand.CanandEventLoop;
+import com.ctre.phoenix6.Utils;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.EE.IntakeCoral;
-import frc.robot.commands.drivetrain.SwerveManual;
-import frc.robot.commands.elevator.ElevatorManual;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.EndEffector;
-import frc.robot.subsystems.swerve.Drivetrain;
-import frc.robot.util.Telemetry;
+import frc.robot.simulation.LimelightSimulation;
 
-
-/**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
- */
 public class Robot extends TimedRobot {
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
+  private Command m_autonomousCommand;
 
-   private Telemetry telemetry;
+  private final RobotContainer m_robotContainer;
+
+  private final boolean kUseLimelight = true;
+
+  private LimelightSimulation limelightSim;
+  private LimelightSimulation limelight2Sim;
+
+  public Robot() {
+    m_robotContainer = new RobotContainer();
+  }
+
   @Override
   public void robotInit() {
-      CommandScheduler.getInstance().setDefaultCommand(Drivetrain.getInstance(), new SwerveManual());
-      CommandScheduler.getInstance().setDefaultCommand(Elevator.getInstance(), new ElevatorManual());
-      CommandScheduler.getInstance().setDefaultCommand(EndEffector.getInstance(), new IntakeCoral());
-      
-      telemetry = new Telemetry();
-      // telemetry.startServer();
-      telemetry.swerveStates();
-      // CanandEventLoop.getInstance();
+    if (Utils.isSimulation()) {
+      limelightSim = new LimelightSimulation(
+          Constants.Vision.kCamera1Name,
+          Constants.Vision.kRobotToCam1);
+      limelight2Sim = new LimelightSimulation(
+          Constants.Vision.kCamera2Name,
+          Constants.Vision.kRobotToCam2);
 
-      // SignalLogger.setPath("/home/lvuser/logs/");
-      SignalLogger.start();
-// 
+      SmartDashboard.putData("LL1Field", limelightSim.getField2d());
+      SmartDashboard.putData("LL2Field", limelight2Sim.getField2d());
     }
+  }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    // RobotMap.Field.FIELD.setRobotPose(new Pose2d(0,0,new Rotation2d(0)));
-    RobotMap.Field.FIELD.setRobotPose(Drivetrain.getInstance().getPoseEstimatorPose2d());
-    telemetry.publish();
+    m_robotContainer.updateTelemetry();
+    if (kUseLimelight) {
+      m_robotContainer.updateVision();
+    }
   }
 
   @Override
-  public void autonomousInit() {}
-
-  @Override
-  public void autonomousPeriodic() {}
-
-  @Override
-  public void teleopInit() {}
-
-  @Override
-  public void teleopPeriodic() {}
-
-  @Override
   public void disabledInit() {
+  }
+
+  @Override
+  public void disabledPeriodic() {
+  }
+
+  @Override
+  public void disabledExit() {
     // SignalLogger.stop();
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void autonomousInit() {
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
+  }
 
   @Override
-  public void testInit() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void testPeriodic() {}
+  public void autonomousExit() {
+  }
 
   @Override
-  public void simulationInit() {}
+  public void teleopInit() {
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
+  }
 
   @Override
-  public void simulationPeriodic() {}
+  public void teleopPeriodic() {
+  }
+
+  @Override
+  public void teleopExit() {
+  }
+
+  @Override
+  public void testInit() {
+    CommandScheduler.getInstance().cancelAll();
+  }
+
+  @Override
+  public void testPeriodic() {
+  }
+
+  @Override
+  public void testExit() {
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    if (limelightSim != null) {
+      limelightSim.update(m_robotContainer.drivetrain.getState().Pose);
+    }
+  }
 }

@@ -1,10 +1,10 @@
 package frc.robot.commands.EE;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotMap;
+import frc.robot.Constants;
 import frc.robot.subsystems.EndEffector;
 
-public class IntakeCoral extends Command { //indefinite!
+public class IntakeCoral extends Command {
     public IntakeCoral () {
         addRequirements(EndEffector.getInstance());
     }
@@ -12,11 +12,11 @@ public class IntakeCoral extends Command { //indefinite!
     public void execute () {
         if (EndEffector.getInstance().isBackTriggered() && !EndEffector.getInstance().isFrontTriggered())
         {
-            EndEffector.getInstance().setSpeed(RobotMap.EndEffector.INTAKE_CORAL_SPEED);
+            EndEffector.getInstance().setSpeed(Constants.EndEffector.INTAKE_CORAL_SPEED);
         }
         else if (!EndEffector.getInstance().isBackTriggered() && EndEffector.getInstance().isFrontTriggered())
         {
-            EndEffector.getInstance().setSpeed(RobotMap.EndEffector.EJECT_SPEED);
+            EndEffector.getInstance().setSpeed(Constants.EndEffector.EJECT_SPEED);
         }
         else
         {
@@ -24,11 +24,13 @@ public class IntakeCoral extends Command { //indefinite!
         }
     }
 
-    public boolean isFinished () {
+    public boolean isFinished ()
+    {
         return false;
     }
 
-    public void end (boolean interrupted) {
+    public void end (boolean interrupted)
+    {
         EndEffector.getInstance().setSpeed(0);
     }
 }

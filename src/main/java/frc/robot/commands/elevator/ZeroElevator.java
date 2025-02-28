@@ -1,7 +1,7 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotMap;
+import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
 
 public class ZeroElevator extends Command {
@@ -10,8 +10,7 @@ public class ZeroElevator extends Command {
     }
 
     public void execute() {
-        Elevator.getInstance().setElevatorPower(RobotMap.Elevator.ZERO_SPEED);
-        Elevator.getInstance().setManual(true);
+        Elevator.getInstance().setElevatorPower(Constants.Elevator.ZERO_SPEED);
     }
 
     public boolean isFinished() {
@@ -22,5 +21,5 @@ public class ZeroElevator extends Command {
         Elevator.getInstance().setElevatorPower(0);
         Elevator.getInstance().setSensorPosition(0);
     }
-    
+
 }

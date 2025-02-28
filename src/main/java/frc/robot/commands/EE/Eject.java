@@ -1,7 +1,7 @@
 package frc.robot.commands.EE;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotMap;
+import frc.robot.Constants;
 import frc.robot.subsystems.EndEffector;
 
 public class Eject extends Command {
@@ -10,7 +10,7 @@ public class Eject extends Command {
     }
 
     public void execute () {
-        EndEffector.getInstance().setSpeed(RobotMap.EndEffector.EJECT_SPEED);
+        EndEffector.getInstance().setSpeed(Constants.EndEffector.EJECT_SPEED);
     }
 
     public boolean isFinished () {

@@ -1,304 +1,346 @@
 package frc.robot.subsystems.swerve;
 
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
-import com.ctre.phoenix6.hardware.Pigeon2;
+import static edu.wpi.first.units.Units.*;
+
+import java.util.function.Supplier;
+
+import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotMap;
-import frc.robot.util.Flip;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
+import frc.robot.subsystems.swerve.Modules.TunerSwerveDrivetrain;
 
-public class Drivetrain extends SubsystemBase {
-    private static Drivetrain instance;
+/**
+ * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
+ * Subsystem so it can easily be used in command-based projects.
+ */
+public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
+    private Notifier m_simNotifier = null;
+    private double m_lastSimTime;
 
-    private SwerveModule[] swerveModules;
+    /* Keep track if we've ever applied the operator perspective before or not */
+    private boolean m_hasAppliedOperatorPerspective = false;
 
-    private Pigeon2 pigeon;
-    private double prevHeading;
+    /** Swerve request to apply during robot-centric path following */
+    private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
-    // // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
-    // private final MutVoltage _appliedVoltage = mutable(Volts.of(0));
-    // // Mutable holder for unit-safe linear distance values, persisted to avoid
-    // // reallocation.
-    // private final MutDistance _distance = mutable(Meters.of(0));
-    // // Mutable holder for unit-safe linear velocity values, persisted to avoid
-    // // reallocation.
-    // private final MutLinearVelocity _velocity = mutable(MetersPerSecond.of(0));
-
-    private SwerveDriveKinematics kinematics; // converts chassis speeds (x, y, theta) to module states (speed, angle)
-
-    // Estimates the robot's pose through encoder (state) and vision measurements;
-    private SwerveDrivePoseEstimator poseEstimator;
-
-    // Standard deviations of pose estimate (x, y, heading)
-    private static Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.05); // increase to trust encoder (state)
-                                                                                        // measurements less
-    private static Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.5, 0.5, 0.5); // increase to trust vsion
-                                                                                        // measurements less
-
-    private boolean robotCentric;
-
-    private Drivetrain() {
-        // initialize swerve modules
-
-        swerveModules = new SwerveModule[] {
-                new SwerveModule(0), new SwerveModule(1), new SwerveModule(2), new SwerveModule(3)
-        };
-
-        // initialize pigeon
-        pigeon = new Pigeon2(RobotMap.Drivetrain.PIGEON_ID, RobotMap.CAN_CHAIN);
-        initPigeon();
-
-        // initialize locations of swerve modules relative to robot (fl, fr, bl, br)
-        // weird ids so fr --> fl, bl --> fr, br --> bl, fl --> bl
-        kinematics = new SwerveDriveKinematics(
-                new Translation2d(RobotMap.Drivetrain.ROBOT_LENGTH / 2, RobotMap.Drivetrain.ROBOT_WIDTH / 2),
-                new Translation2d(RobotMap.Drivetrain.ROBOT_LENGTH / 2, -RobotMap.Drivetrain.ROBOT_WIDTH / 2),
-                new Translation2d(-RobotMap.Drivetrain.ROBOT_LENGTH / 2, RobotMap.Drivetrain.ROBOT_WIDTH / 2),
-                new Translation2d(-RobotMap.Drivetrain.ROBOT_LENGTH / 2, -RobotMap.Drivetrain.ROBOT_WIDTH / 2));
-
-
-        // initial pose (holds the x, y, heading)
-        Pose2d initalPoseMeters = new Pose2d();
-
-        // initialize pose estimator
-        poseEstimator = new SwerveDrivePoseEstimator(
-                kinematics,
-                getRotation(),
-                getModulePositions(),
-                initalPoseMeters,
-                stateStdDevs,
-                visionStdDevs);
-        
-        robotCentric = false;
-    }
+    /* Swerve requests to apply during SysId characterization */
+    private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
+    private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
+    private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
     /*
-     * Initialize pigeon values
+     * SysId routine for characterizing translation. This is used to find PID gains
+     * for the drive motors.
      */
-    private void initPigeon() {
-        Pigeon2Configuration pigeonConfigs = new Pigeon2Configuration();
-        pigeonConfigs.MountPose.MountPosePitch = 0;
-        pigeonConfigs.MountPose.MountPoseRoll = 0;
-        pigeonConfigs.MountPose.MountPoseYaw = 180;
-        pigeonConfigs.Pigeon2Features.EnableCompass = false;
-        // pigeon.getYaw().setUpdateFrequency(250);
+    private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                    null, // Use default ramp rate (1 V/s)
+                    Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+                    null, // Use default timeout (10 s)
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    output -> setControl(m_translationCharacterization.withVolts(output)),
+                    null,
+                    this));
 
-        pigeon.getConfigurator().apply(pigeonConfigs);
-    }
+    /*
+     * SysId routine for characterizing steer. This is used to find PID gains for
+     * the steer motors.
+     */
+    private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                    null, // Use default ramp rate (1 V/s)
+                    Volts.of(7), // Use dynamic voltage of 7 V
+                    null, // Use default timeout (10 s)
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    volts -> setControl(m_steerCharacterization.withVolts(volts)),
+                    null,
+                    this));
+
+    /*
+     * SysId routine for characterizing rotation.
+     * This is used to find PID gains for the FieldCentricFacingAngle
+     * HeadingController.
+     * See the documentation of SwerveRequest.SysIdSwerveRotation for info on
+     * importing the log to SysId.
+     */
+    private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                    /* This is in radians per second², but SysId only supports "volts per second" */
+                    Volts.of(Math.PI / 6).per(Second),
+                    /* This is in radians per second, but SysId only supports "volts" */
+                    Volts.of(Math.PI),
+                    null, // Use default timeout (10 s)
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    output -> {
+                        /* output is actually radians per second, but SysId only supports "volts" */
+                        setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
+                        /* also log the requested output for SysId */
+                        SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
+                    },
+                    null,
+                    this));
+
+    /* The SysId routine to test */
+    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineRotation;
 
     /**
-     * Updates previous heading to the current heading or continues in the
-     * same direction (omega becomes adjusted by the prevous heading)
-     * 
-     * @param omega rotational speed
-     * @return adjusted rotational speed
+     * Constructs a CTRE SwerveDrivetrain using the specified constants.
+     * <p>
+     * This constructs the underlying hardware devices, so users should not
+     * construct
+     * the devices themselves. If they need the devices, they can access them
+     * through
+     * getters in the classes.
+     *
+     * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
+     * @param modules             Constants for each specific module
      */
-    public double adjustPigeon(double omega) {
-        double currHeading = poseEstimator.getEstimatedPosition().getRotation().getDegrees();
-        if (Math.abs(omega) <= RobotMap.Drivetrain.MIN_OUTPUT) {
-            omega = -RobotMap.Drivetrain.PIGEON_kP * (prevHeading - currHeading);
-        } else {
-            prevHeading = currHeading;
+    public Drivetrain(
+            SwerveDrivetrainConstants drivetrainConstants,
+            SwerveModuleConstants<?, ?, ?>... modules) {
+        super(drivetrainConstants, modules);
+        if (Utils.isSimulation()) {
+            startSimThread();
         }
-
-        return omega;
+        configureAutoBuilder();
     }
 
     /**
-     * @return pitch of pigeon in degrees
+     * Constructs a CTRE SwerveDrivetrain using the specified constants.
+     * <p>
+     * This constructs the underlying hardware devices, so users should not
+     * construct
+     * the devices themselves. If they need the devices, they can access them
+     * through
+     * getters in the classes.
+     *
+     * @param drivetrainConstants     Drivetrain-wide constants for the swerve drive
+     * @param odometryUpdateFrequency The frequency to run the odometry loop. If
+     *                                unspecified or set to 0 Hz, this is 250 Hz on
+     *                                CAN FD, and 100 Hz on CAN 2.0.
+     * @param modules                 Constants for each specific module
      */
-    public double getPitch() {
-        double pitch = pigeon.getPitch().getValueAsDouble();
-        return pitch;
-    }
-
-    public boolean robotCentric() {
-        return robotCentric;
-    }
-
-    public void toggleRobotCentric() {
-        robotCentric = !robotCentric;
-    }
-
-    /**
-     * @return heading of pigeon as a Rotation2d
-     */
-    public Rotation2d getRotation() {
-        return pigeon.getRotation2d();
-    }
-
-    /**
-     * @return the states of the swerve modules in an array
-     */
-    private SwerveModulePosition[] getModulePositions() {
-        return new SwerveModulePosition[] {
-                swerveModules[0].getSwerveModulePosition(),
-                swerveModules[1].getSwerveModulePosition(),
-                swerveModules[2].getSwerveModulePosition(),
-                swerveModules[3].getSwerveModulePosition()
-        };
-    }
-
-    /**
-     * Sets the initial pose of the drivetrain
-     * 
-     * @param pose intial Pose2d of drivetrain
-     */
-    public void setPose(Pose2d pose) {
-        pose = Flip.apply(pose);
-        swerveModules[0].zeroTranslation();
-        swerveModules[1].zeroTranslation();
-        swerveModules[2].zeroTranslation();
-        swerveModules[3].zeroTranslation();
-        setYaw(pose.getRotation().getDegrees());
-        poseEstimator.resetPosition(getRotation(), getModulePositions(), pose);
-    }
-
-    /**
-     * Sets the yaw of the pigeon to the given angle
-     * 
-     * @param yaw angle in degrees
-     */
-    public void setYaw(double yaw) {
-        // System.out.println(yaw);
-        pigeon.setYaw(yaw);
-        setPreviousHeading(yaw);
-    }
-
-    /**
-     * Updates previous heading
-     * 
-     * @param prev new heading
-     */
-    public void setPreviousHeading(double prev) {
-        prevHeading = prev;
-    }
-
-    /**
-     * @return kinematics of swerve drive
-     */
-    public SwerveDriveKinematics getKinematics() {
-        return kinematics;
-    }
-
-    /**
-     * Singleton code
-     * 
-     * @return instance of Drivetrain
-     */
-    public static Drivetrain getInstance() {
-        if (instance == null) {
-            instance = new Drivetrain();
+    public Drivetrain(
+            SwerveDrivetrainConstants drivetrainConstants,
+            double odometryUpdateFrequency,
+            SwerveModuleConstants<?, ?, ?>... modules) {
+        super(drivetrainConstants, odometryUpdateFrequency, modules);
+        if (Utils.isSimulation()) {
+            startSimThread();
         }
-        return instance;
+        configureAutoBuilder();
     }
 
     /**
-     * Converts chassis speeds to individual swerve module
-     * states and sets the angle and drive for them
-     * 
-     * @param chassis chassis speeds to convert
+     * Constructs a CTRE SwerveDrivetrain using the specified constants.
+     * <p>
+     * This constructs the underlying hardware devices, so users should not
+     * construct
+     * the devices themselves. If they need the devices, they can access them
+     * through
+     * getters in the classes.
+     *
+     * @param drivetrainConstants       Drivetrain-wide constants for the swerve
+     *                                  drive
+     * @param odometryUpdateFrequency   The frequency to run the odometry loop. If
+     *                                  unspecified or set to 0 Hz, this is 250 Hz
+     *                                  on
+     *                                  CAN FD, and 100 Hz on CAN 2.0.
+     * @param odometryStandardDeviation The standard deviation for odometry
+     *                                  calculation
+     *                                  in the form [x, y, theta]ᵀ, with units in
+     *                                  meters
+     *                                  and radians
+     * @param visionStandardDeviation   The standard deviation for vision
+     *                                  calculation
+     *                                  in the form [x, y, theta]ᵀ, with units in
+     *                                  meters
+     *                                  and radians
+     * @param modules                   Constants for each specific module
      */
-    public void setAngleAndDrive(ChassisSpeeds chassis) {
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassis);
-        // SwerveDriveKinematics.desaturateWheelSpeeds(states,
-        // RobotMap.SwerveModule.MAX_SPEED);
-        swerveModules[0].setAngleAndDrive(states[0]);
-        swerveModules[1].setAngleAndDrive(states[1]);
-        swerveModules[2].setAngleAndDrive(states[2]);
-        swerveModules[3].setAngleAndDrive(states[3]);
-    }
-
-    /**
-     * Called every loop, feeds newest encoder readings to estimator
-     */
-    public void updatePose() {
-        // System.out.println(getRotation() + " " + getModulePositions());
-        poseEstimator.update(getRotation(), getModulePositions());
-    }
-
-
-    /**
-     * @return the estimated pose as a Pose2d
-     */
-    public Pose2d getPoseEstimatorPose2d() {
-        return poseEstimator.getEstimatedPosition();
-    }
-
-    public SwerveModuleState[] getOptimizedStates() {
-        SwerveModuleState[] states = new SwerveModuleState[4];
-        for (SwerveModule mod : swerveModules) {
-            states[mod.ID] = mod.getOptimizedModuleState();
+    public Drivetrain(
+            SwerveDrivetrainConstants drivetrainConstants,
+            double odometryUpdateFrequency,
+            Matrix<N3, N1> odometryStandardDeviation,
+            Matrix<N3, N1> visionStandardDeviation,
+            SwerveModuleConstants<?, ?, ?>... modules) {
+        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
+                modules);
+        if (Utils.isSimulation()) {
+            startSimThread();
         }
-
-        return states;
+        configureAutoBuilder();
     }
 
-    public SwerveModuleState[] getModuleStates() {
-        SwerveModuleState[] states = new SwerveModuleState[4];
-        for (SwerveModule mod : swerveModules) {
-            states[mod.ID] = mod.getSwerveModuleState();
-        }
-        return states;
-    }
-
-    // private final SysIdRoutine _sysId = new SysIdRoutine(
-    //         new SysIdRoutine.Config(),
-    //         new SysIdRoutine.Mechanism(
-    //                 (Voltage volts) -> {
-    //                     runSwerveCharacterization(volts.in(Volts));
-    //                 },
-    //                 log -> {
-    //                     log.motor("drive-left")
-    //                             .voltage(
-    //                                     _appliedVoltage.mut_replace(
-    //                                             swerveModules[3].getTranslationVoltage(), Volts))
-    //                             .linearPosition(
-    //                                     _distance.mut_replace(swerveModules[3].getWheelPosition(), Meters))
-    //                             .linearVelocity(
-    //                                     _velocity.mut_replace(swerveModules[3].getSpeed(), MetersPerSecond));
-    //                     log.motor("drive-right")
-    //                             .voltage(
-    //                                     _appliedVoltage.mut_replace(
-    //                                             swerveModules[0].getTranslationVoltage(),
-    //                                             Volts))
-    //                             .linearPosition(
-    //                                     _distance.mut_replace(swerveModules[3].getWheelPosition(), Meters))
-    //                             .linearVelocity(
-    //                                     _velocity.mut_replace(swerveModules[0].getSpeed(), MetersPerSecond));
-    //                 },
-    //                 this));
-
-    public void runSwerveCharacterization(double volts) {
-        for (SwerveModule module : swerveModules) {
-            module.runCharacterization(volts);
+    private void configureAutoBuilder() {
+        try {
+            var config = RobotConfig.fromGUISettings();
+            AutoBuilder.configure(
+                    () -> getState().Pose, // Supplier of current robot pose
+                    this::resetPose, // Consumer for seeding pose against auto
+                    () -> getState().Speeds, // Supplier of current robot speeds
+                    // Consumer of ChassisSpeeds and feedforwards to drive the robot
+                    (speeds, feedforwards) -> setControl(
+                            m_pathApplyRobotSpeeds.withSpeeds(speeds)
+                                    .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                                    .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
+                    new PPHolonomicDriveController(
+                            // PID constants for translation
+                            new PIDConstants(10, 0, 0),
+                            // PID constants for rotation
+                            new PIDConstants(7, 0, 0)),
+                    config,
+                    // Assume the path needs to be flipped for Red vs Blue, this is normally the
+                    // case
+                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                    this // Subsystem for requirements
+            );
+        } catch (Exception ex) {
+            DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder",
+                    ex.getStackTrace());
         }
     }
 
-    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    //     return _sysId.quasistatic(direction);
-    // }
+    /**
+     * Returns a command that applies the specified control request to this swerve
+     * drivetrain.
+     *
+     * @param request Function returning the request to apply
+     * @return Command to run
+     */
+    public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
+        return run(() -> this.setControl(requestSupplier.get()));
+    }
 
-    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    //     return _sysId.dynamic(direction);
-    // }
+    /**
+     * Runs the SysId Quasistatic test in the given direction for the routine
+     * specified by {@link #m_sysIdRoutineToApply}.
+     *
+     * @param direction Direction of the SysId Quasistatic test
+     * @return Command to run
+     */
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return m_sysIdRoutineToApply.quasistatic(direction);
+    }
+
+    /**
+     * Runs the SysId Dynamic test in the given direction for the routine
+     * specified by {@link #m_sysIdRoutineToApply}.
+     *
+     * @param direction Direction of the SysId Dynamic test
+     * @return Command to run
+     */
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return m_sysIdRoutineToApply.dynamic(direction);
+    }
 
     @Override
     public void periodic() {
-        updatePose();
+        /*
+         * Periodically try to apply the operator perspective.
+         * If we haven't applied the operator perspective before, then we should apply
+         * it regardless of DS state.
+         * This allows us to correct the perspective in case the robot code restarts
+         * mid-match.
+         * Otherwise, only check and apply the operator perspective if the DS is
+         * disabled.
+         * This ensures driving behavior doesn't change until an explicit disable event
+         * occurs during testing.
+         */
+        if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+            DriverStation.getAlliance().ifPresent(allianceColor -> {
+                var perspective = allianceColor == Alliance.Red
+                        ? Constants.Drive.kRedAlliancePerspectiveRotation
+                        : Constants.Drive.kBlueAlliancePerspectiveRotation;
 
-    }    
+                // This ensures the field coordinate system origin stays at blue alliance
+                setOperatorPerspectiveForward(perspective);
+
+                m_hasAppliedOperatorPerspective = true;
+            });
+        }
+    }
+
+    private void startSimThread() {
+        m_lastSimTime = Utils.getCurrentTimeSeconds();
+
+        /* Run simulation at a faster rate so PID gains behave more reasonably */
+        m_simNotifier = new Notifier(() -> {
+            final double currentTime = Utils.getCurrentTimeSeconds();
+            double deltaTime = currentTime - m_lastSimTime;
+            m_lastSimTime = currentTime;
+
+            /* use the measured time delta, get battery voltage from WPILib */
+            updateSimState(deltaTime, RobotController.getBatteryVoltage());
+        });
+        m_simNotifier.startPeriodic(Constants.Sim.kSimLoopPeriod);
+    }
+
+    /**
+     * Adds a vision measurement to the Kalman Filter. This will correct the
+     * odometry pose estimate
+     * while still accounting for measurement noise.
+     *
+     * @param visionRobotPoseMeters The pose of the robot as measured by the vision
+     *                              camera.
+     * @param timestampSeconds      The timestamp of the vision measurement in
+     *                              seconds.
+     */
+    @Override
+    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    /**
+     * Adds a vision measurement to the Kalman Filter. This will correct the
+     * odometry pose estimate
+     * while still accounting for measurement noise.
+     * <p>
+     * Note that the vision measurement standard deviations passed into this method
+     * will continue to apply to future measurements until a subsequent call to
+     * {@link #setVisionMeasurementStdDevs(Matrix)} or this method.
+     *
+     * @param visionRobotPoseMeters    The pose of the robot as measured by the
+     *                                 vision camera.
+     * @param timestampSeconds         The timestamp of the vision measurement in
+     *                                 seconds.
+     * @param visionMeasurementStdDevs Standard deviations of the vision pose
+     *                                 measurement
+     *                                 in the form [x, y, theta]ᵀ, with units in
+     *                                 meters and radians.
+     */
+    @Override
+    public void addVisionMeasurement(
+            Pose2d visionRobotPoseMeters,
+            double timestampSeconds,
+            Matrix<N3, N1> visionMeasurementStdDevs) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
+                visionMeasurementStdDevs);
+    }
 }
- 
