@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.EE.IntakeAlgae;
 import frc.robot.commands.EE.Score;
+import frc.robot.commands.elevator.ElevatorManual;
 import frc.robot.commands.elevator.MoveToPosition;
 import frc.robot.commands.elevator.ZeroElevator;
 import frc.robot.subsystems.swerve.Drivetrain;
@@ -32,6 +33,8 @@ import frc.robot.vision.VisionProcessor;
 import harkerrobolib.joysticks.HSXboxController;
 
 public class RobotContainer {
+    private static RobotContainer instance = RobotContainer.getInstance();
+
     private double MaxSpeed = Constants.Swerve.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
                                                                                       // max angular velocity
@@ -89,24 +92,7 @@ public class RobotContainer {
                         .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
                 ));
 
-        elevator.setDefaultCommand(
-                new RunCommand(
-                        () -> {
-                            // Get elevator movement from D-pad
-                            double movement = 0;
-                            if (operator.getUpDPadState())
-                                movement = 0.2;
-                            else if (operator.getDownDPadState())
-                                movement = -0.2;
-
-                            if (movement != 0) {
-                                elevator.moveToPosition(elevator.getPosition() + movement);
-                            } 
-                            else {
-                                elevator.moveToPosition(elevator.getPosition());
-                            }
-                        },
-                        elevator));
+        elevator.setDefaultCommand(new ElevatorManual());
 
         endEffector.setDefaultCommand(
                 new RunCommand(
@@ -176,5 +162,15 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
+    }
+
+    public HSXboxController getOperator() {
+        return operator;
+    }
+
+    public static RobotContainer getInstance() {
+        if (instance == null)
+            instance = new RobotContainer();
+        return instance;
     }
 }

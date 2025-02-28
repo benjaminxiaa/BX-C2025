@@ -243,8 +243,8 @@ public class Constants {
         public static final double kV = 0.69985;
         public static final double kS = 0.19926;
 
-        public static final boolean MASTER_INVERTED = true; // TODO
-        public static final boolean FOLLOWER_INVERTED = true; // TODO
+        public static final InvertedValue MASTER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
+        public static final InvertedValue FOLLOWER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
 
         public static final int MASTER_ID = 14;
         public static final int FOLLOWER_ID = 15;
