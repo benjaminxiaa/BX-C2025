@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.EE.IntakeAlgae;
+import frc.robot.commands.EE.IntakeCoral;
 import frc.robot.commands.EE.Score;
 import frc.robot.commands.elevator.ElevatorManual;
 import frc.robot.commands.elevator.MoveToPosition;
@@ -36,13 +37,17 @@ public class RobotContainer {
     private static RobotContainer instance = RobotContainer.getInstance();
 
     private double MaxSpeed = Constants.Swerve.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
-                                                                                      // max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second // max angular velocity
+
+    private double MaxSpeedSlow = MaxSpeed * 0.2;
+    private double MaxAngularRateSlow = MaxAngularRate * 0.6;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+            // .withMaximumAcceleration(MaxSpeed * 0.5)
+            // .withMaximumAngularAcceleration(MaxAngularRate * 0.5);
     private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
@@ -87,34 +92,15 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                        .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drivetrain.applyRequest(() -> drive
+                        .withVelocityX((driver.getRightTriggerAxis() > 0.5) ? -driver.getLeftY() * MaxSpeedSlow : -driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY((driver.getRightTriggerAxis() > 0.5) ? -driver.getLeftX() * MaxSpeedSlow : -driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate((driver.getRightTriggerAxis() > 0.5) ? -driver.getRightX() * MaxSpeedSlow : -driver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
                 ));
 
         elevator.setDefaultCommand(new ElevatorManual());
 
-        endEffector.setDefaultCommand(
-                new RunCommand(
-                    () -> {
-                        if (!endEffector.isBackTriggered() && !endEffector.isFrontTriggered())
-                        {
-                            endEffector.setSpeed((endEffector.isContinuousIntake()) ? Constants.EndEffector.INTAKE_CORAL_SLOW_SPEED : 0);
-                        }
-                        else if (endEffector.isBackTriggered() && !endEffector.isFrontTriggered())
-                        {
-                            endEffector.setSpeed(Constants.EndEffector.INTAKE_CORAL_SPEED);
-                        }
-                        else if (!EndEffector.getInstance().isBackTriggered() && EndEffector.getInstance().isFrontTriggered())
-                        {
-                            endEffector.setSpeed(Constants.EndEffector.EJECT_SPEED);
-                        }
-                        else
-                        {
-                            endEffector.setSpeed(0);
-                        }
-                    },
-                    endEffector));
+        endEffector.setDefaultCommand(new IntakeCoral());
 
         // reset the field-centric heading on button b press
         driver.b().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -136,8 +122,6 @@ public class RobotContainer {
 
         operator.leftBumper().onTrue(new MoveToPosition(Constants.Elevator.ALGAE_HEIGHTS[0]));
         operator.rightBumper().onTrue(new MoveToPosition(Constants.Elevator.ALGAE_HEIGHTS[1]));
-
-        operator.getLeftDPad().onTrue(endEffector.runOnce(() -> endEffector.toggleContinousIntake()));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.

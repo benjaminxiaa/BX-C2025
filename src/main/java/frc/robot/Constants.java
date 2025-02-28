@@ -235,12 +235,12 @@ public class Constants {
     public static final class Elevator {
         public static final double MAX_ERROR = 0.05; // TODO rotations
 
-        public static final double kP = 20;
+        public static final double kP = 10;
         public static final double kI = 0; //1;
         public static final double kD = 0; //1;
 
         public static final double kG = 0.41279; // TODO
-        public static final double kV = 0.69985;
+        public static final double kV = 0.79985;
         public static final double kS = 0.19926;
 
         public static final InvertedValue MASTER_INVERTED = InvertedValue.Clockwise_Positive; // TODO
@@ -288,7 +288,7 @@ public class Constants {
         public static final double INTAKE_ALGAE_SPEED = 0.4;
         public static final double INTAKE_CORAL_SPEED = -0.3;
         public static final double INTAKE_CORAL_SLOW_SPEED = -0.15;
-        public static final double OUTTAKE_SPEED = -0.3;
+        public static final double OUTTAKE_SPEED = -1.0;
         public static final double EJECT_SPEED = 0.1;
 
         public static final double ALGAE_HOLD_SPEED = 0.15;

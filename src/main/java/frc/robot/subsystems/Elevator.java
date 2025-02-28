@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 
@@ -33,6 +34,8 @@ public class Elevator extends SubsystemBase
 
     private SysIdRoutine sysIdRoutine;
 
+    private double desiredPosition;
+
     private Elevator() 
     {
         master = new TalonFX(Constants.Elevator.MASTER_ID, Constants.CAN_CHAIN);
@@ -42,6 +45,8 @@ public class Elevator extends SubsystemBase
         config();
 
         limitSwitch = new DigitalInput(Constants.Elevator.LIMIT_SWITCH_ID);
+
+        desiredPosition = 0.0;
 
     }
 
@@ -81,6 +86,10 @@ public class Elevator extends SubsystemBase
 
         masterConfig.Slot0.kV = Constants.Elevator.kV;
         masterConfig.Slot0.kG = Constants.Elevator.kG;
+
+        masterConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.Elevator.MM_CRUISE_VELOCITY;
+        masterConfig.MotionMagic.MotionMagicAcceleration = Constants.Elevator.MM_ACCELERATION;
+        masterConfig.MotionMagic.MotionMagicJerk = Constants.Elevator.MM_JERK;
 
         masterConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
         masterConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
@@ -155,7 +164,13 @@ public class Elevator extends SubsystemBase
 
     public void moveToPosition(double desiredPosition)
     {
-        master.setControl(new PositionVoltage(desiredPosition));
+        this.desiredPosition = desiredPosition;
+        master.setControl(new MotionMagicVoltage(desiredPosition));
+    }
+
+    public double getDesiredPosition()
+    {
+        return desiredPosition;
     }
 
     public void resetEncoders() 

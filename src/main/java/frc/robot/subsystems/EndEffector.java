@@ -1,79 +1,83 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
-import com.reduxrobotics.sensors.canandcolor.CanandcolorSettings;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import harkerrobolib.motors.HSTalonFX;
-import harkerrobolib.util.PIDConfig;
 
-public class EndEffector extends SubsystemBase {
+public class EndEffector extends SubsystemBase 
+{
     private static EndEffector instance;
-    private HSTalonFX motor;
+    private TalonFX motor;
 
     private Canandcolor frontCanandcolor;
     private Canandcolor backCanandcolor;
-
-    private boolean continuousIntake;
-
-    private EndEffector() {
-        motor = new HSTalonFX(Constants.EndEffector.ID, HSTalonFX.makeDefaultConfig()
-                .setInverted(true)
-                .setPIDConfig(0,
-                        new PIDConfig(Constants.EndEffector.kP, Constants.EndEffector.kI, Constants.EndEffector.kD))
-                .setStatorCurrentLimit(Constants.EndEffector.STATOR_CURRENT_LIMIT));
+    
+    private EndEffector ()
+    {
+        motor = new TalonFX(Constants.EndEffector.ID, Constants.CAN_CHAIN);
+        config();
 
         frontCanandcolor = new Canandcolor(Constants.EndEffector.FRONT_CANANDCOLOR_ID);
         backCanandcolor = new Canandcolor(Constants.EndEffector.BACK_CANANDCOLOR_ID);
-        configCanandcolors();
-
-        continuousIntake = false; // TODO change for true for new EE
     }
 
-    private void configCanandcolors() {
-        CanandcolorSettings settings = new CanandcolorSettings();
-        settings.setLampLEDBrightness(0);
-        settings.setProximityFramePeriod(0.005);
-        frontCanandcolor.setSettings(settings);
-        backCanandcolor.setSettings(settings);
+    private void config ()
+    {
+        motor.clearStickyFaults();
+
+        TalonFXConfiguration config = new TalonFXConfiguration();
+
+        config.MotorOutput.Inverted = Constants.EndEffector.INVERTED;
+        config.Slot0.kP = Constants.EndEffector.kP;
+        config.Slot0.kI = Constants.EndEffector.kI;
+        config.Slot0.kD = Constants.EndEffector.kD;
+
+        config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
+        config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+
+        config.CurrentLimits.StatorCurrentLimit = Constants.EndEffector.STATOR_CURRENT_LIMIT;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        
+        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+        motor.getConfigurator().apply(config);
     }
 
     /**
      * @return rotations per second
      */
-    public double getSpeed() {
-        return motor.getSensorVelocity();
+    public double getSpeed ()
+    {
+        return motor.getVelocity().getValueAsDouble();
     }
 
     /**
      * @param speed rotations per second
      */
-    public void setSpeed(double speed) {
+    public void setSpeed (double speed)
+    {
         // motor.setControl(new VelocityVoltage(speed));
         motor.setControl(new DutyCycleOut(speed));
     }
 
-    public boolean isBackTriggered() {
+    public boolean isBackTriggered ()
+    {
         return backCanandcolor.getProximity() < Constants.EndEffector.PROXIMITY_LIMIT_BACK;
     }
 
-    public boolean isFrontTriggered() {
+    public boolean isFrontTriggered ()
+    {
         return frontCanandcolor.getProximity() < Constants.EndEffector.PROXIMITY_LIMIT_FRONT;
     }
 
-    public boolean isContinuousIntake() {
-        return continuousIntake;
-    }
-
-    public void toggleContinousIntake() {
-        continuousIntake = !continuousIntake;
-    }
-
-    public static EndEffector getInstance() {
-        if (instance == null)
-            instance = new EndEffector();
+    public static EndEffector getInstance ()
+    {
+        if (instance == null) instance = new EndEffector();
         return instance;
     }
 }
