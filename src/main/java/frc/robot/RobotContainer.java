@@ -9,27 +9,26 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.EE.IntakeAlgae;
 import frc.robot.commands.EE.Score;
-import frc.robot.commands.elevator.ElevatorManual;
+import frc.robot.commands.drivetrain.AutoAlign;
 import frc.robot.commands.elevator.MoveToPosition;
 import frc.robot.commands.elevator.ZeroElevator;
 import frc.robot.subsystems.swerve.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.swerve.Modules;
-import frc.robot.vision.VisionProcessor;
 import harkerrobolib.joysticks.HSXboxController;
 
 public class RobotContainer {
@@ -47,8 +46,6 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
-
-    private final VisionProcessor visionProcessor;
 
     private final HSXboxController driver = new HSXboxController(0);
     private final HSXboxController operator = new HSXboxController(1);
@@ -72,11 +69,6 @@ public class RobotContainer {
         autoChooser = AutoBuilder.buildAutoChooser("auton1");
         SmartDashboard.putData("Auton Chooser", autoChooser);
 
-        visionProcessor = new VisionProcessor(
-                drivetrain,
-                Constants.Vision.LL4_CONFIG,
-                Constants.Vision.LL3_CONFIG);
-
         SignalLogger.start();
 
         configureBindings();
@@ -85,59 +77,69 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                        .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-                ));
+        if (!Utils.isSimulation()) {
+            drivetrain.setDefaultCommand(
+                    // Drivetrain will execute this command periodically
+                    drivetrain.applyRequest(() -> drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                            .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                            .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                    ));
 
-        elevator.setDefaultCommand(new ElevatorManual());
+            elevator.setDefaultCommand(
+                    new RunCommand(
+                            () -> {
+                                if (operator.getUpDPadState()) {
+                                    elevator.moveToPosition(elevator.getPosition() + 0.2);
+                                } else if (operator.getDownDPadState()) {
+                                    elevator.moveToPosition(elevator.getPosition() - 0.2);
+                                } else {
+                                    elevator.moveToPosition(elevator.getPosition());
+                                }
+                            },
+                            elevator
+                    )
+            );
 
-        endEffector.setDefaultCommand(
-                new RunCommand(
-                    () -> {
-                        if (!endEffector.isBackTriggered() && !endEffector.isFrontTriggered())
-                        {
-                            endEffector.setSpeed((endEffector.isContinuousIntake()) ? Constants.EndEffector.INTAKE_CORAL_SLOW_SPEED : 0);
-                        }
-                        else if (endEffector.isBackTriggered() && !endEffector.isFrontTriggered())
-                        {
-                            endEffector.setSpeed(Constants.EndEffector.INTAKE_CORAL_SPEED);
-                        }
-                        else if (!EndEffector.getInstance().isBackTriggered() && EndEffector.getInstance().isFrontTriggered())
-                        {
-                            endEffector.setSpeed(Constants.EndEffector.EJECT_SPEED);
-                        }
-                        else
-                        {
-                            endEffector.setSpeed(0);
-                        }
-                    },
-                    endEffector));
+            endEffector.setDefaultCommand(
+                    new RunCommand(
+                            () -> {
+                                if (!endEffector.isBackTriggered() && !endEffector.isFrontTriggered()) {
+                                    endEffector.setSpeed((endEffector.isContinuousIntake()) ? Constants.EndEffector.INTAKE_CORAL_SLOW_SPEED : 0);
+                                } else if (endEffector.isBackTriggered() && !endEffector.isFrontTriggered()) {
+                                    endEffector.setSpeed(Constants.EndEffector.INTAKE_CORAL_SPEED);
+                                } else if (!EndEffector.getInstance().isBackTriggered() && EndEffector.getInstance().isFrontTriggered()) {
+                                    endEffector.setSpeed(Constants.EndEffector.EJECT_SPEED);
+                                } else {
+                                    endEffector.setSpeed(0);
+                                }
+                            },
+                            endEffector));
 
-        // reset the field-centric heading on button b press
-        driver.b().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+            // reset the field-centric heading on button b press
+            driver.b().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        driver.rightBumper().onTrue(new Score()
-                .andThen(new MoveToPosition(0)
-                        .andThen(new ZeroElevator())));
+            driver.rightBumper().onTrue(new Score()
+                    .andThen(new MoveToPosition(0)
+                            .andThen(new ZeroElevator())));
 
-        driver.x().onTrue(new Score());
+            driver.x().onTrue(new Score());
 
-        driver.leftBumper().onTrue(new IntakeAlgae());
+            driver.leftBumper().onTrue(new IntakeAlgae());
 
-        driver.y().whileTrue(new ZeroElevator());
+            driver.y().whileTrue(new ZeroElevator());
 
-        operator.x().onTrue(new MoveToPosition(0).andThen(new ZeroElevator()));
-        operator.y().onTrue(new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[3]));
-        operator.b().onTrue(new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[2]));
-        operator.a().onTrue(new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[1]));
+            driver.a().whileTrue(new AutoAlign(drivetrain, AutoAlign.AlignmentTarget.CORAL, AutoAlign.AlignmentMode.CENTER));
 
-        operator.leftBumper().onTrue(new MoveToPosition(Constants.Elevator.ALGAE_HEIGHTS[0]));
-        operator.rightBumper().onTrue(new MoveToPosition(Constants.Elevator.ALGAE_HEIGHTS[1]));
+            operator.x().onTrue(new MoveToPosition(0).andThen(new ZeroElevator()));
+            operator.y().onTrue(new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[3]));
+            operator.b().onTrue(new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[2]));
+            operator.a().onTrue(new MoveToPosition(Constants.Elevator.LEVEL_HEIGHTS[1]));
 
-        operator.getLeftDPad().onTrue(endEffector.runOnce(() -> endEffector.toggleContinousIntake()));
+            operator.leftBumper().onTrue(new MoveToPosition(Constants.Elevator.ALGAE_HEIGHTS[0]));
+            operator.rightBumper().onTrue(new MoveToPosition(Constants.Elevator.ALGAE_HEIGHTS[1]));
+
+            operator.getLeftDPad().onTrue(endEffector.runOnce(() -> endEffector.toggleContinousIntake()));
+        }
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -153,11 +155,6 @@ public class RobotContainer {
 
     public void updateTelemetry() {
         logger.telemeterize(elevator, endEffector);
-    }
-
-    public void updateVision() {
-        visionProcessor.update();
-
     }
 
     public Command getAutonomousCommand() {
