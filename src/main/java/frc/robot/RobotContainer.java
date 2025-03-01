@@ -101,11 +101,11 @@ public class RobotContainer {
                 .andThen(new MoveToPosition(0)
                         .andThen(new ZeroElevator())));
 
-        driver.leftBumper().onTrue(new AutoAlign(drivetrain, AutoAlign.AlignmentTarget.CORAL, AutoAlign.AlignmentMode.CENTER)); // TODO CHANGE ALIGNMENT MODE
+        driver.rightTrigger().onTrue(new AutoAlign(drivetrain, AutoAlign.AlignmentTarget.CORAL, AutoAlign.AlignmentMode.LEFT_POLE)); // TODO CHANGE ALIGNMENT MODE
 
         driver.x().onTrue(new Score());
 
-        driver.a().onTrue(new IntakeAlgae());
+        driver.leftBumper().onTrue(new IntakeAlgae());
 
         driver.y().whileTrue(new ZeroElevator());
 
