@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.EE.IntakeAlgae;
 import frc.robot.commands.EE.IntakeCoral;
 import frc.robot.commands.EE.Score;
+import frc.robot.commands.drivetrain.AutoAlign;
 import frc.robot.commands.elevator.ElevatorManual;
 import frc.robot.commands.elevator.MoveToPosition;
 import frc.robot.commands.elevator.ZeroElevator;
@@ -29,7 +30,6 @@ import frc.robot.subsystems.swerve.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.swerve.Modules;
-import frc.robot.vision.VisionProcessor;
 import harkerrobolib.joysticks.HSXboxController;
 
 public class RobotContainer {
@@ -52,8 +52,6 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry();
 
-    private final VisionProcessor visionProcessor;
-
     private final HSXboxController driver = new HSXboxController(0);
     private final HSXboxController operator = new HSXboxController(1);
 
@@ -75,11 +73,6 @@ public class RobotContainer {
 
         autoChooser = AutoBuilder.buildAutoChooser("auton1");
         SmartDashboard.putData("Auton Chooser", autoChooser);
-
-        visionProcessor = new VisionProcessor(
-                drivetrain,
-                Constants.Vision.LL4_CONFIG,
-                Constants.Vision.LL3_CONFIG);
 
         SignalLogger.start();
 
@@ -108,9 +101,11 @@ public class RobotContainer {
                 .andThen(new MoveToPosition(0)
                         .andThen(new ZeroElevator())));
 
+        driver.leftBumper().onTrue(new AutoAlign(drivetrain, AutoAlign.AlignmentTarget.CORAL, AutoAlign.AlignmentMode.CENTER)); // TODO CHANGE ALIGNMENT MODE
+
         driver.x().onTrue(new Score());
 
-        driver.leftBumper().onTrue(new IntakeAlgae());
+        driver.a().onTrue(new IntakeAlgae());
 
         driver.y().whileTrue(new ZeroElevator());
 
@@ -136,11 +131,6 @@ public class RobotContainer {
 
     public void updateTelemetry() {
         logger.telemeterize(elevator, endEffector);
-    }
-
-    public void updateVision() {
-        visionProcessor.update();
-
     }
 
     public Command getAutonomousCommand() {

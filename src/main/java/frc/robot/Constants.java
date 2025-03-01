@@ -10,13 +10,13 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.vision.VisionProcessor;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -41,34 +41,15 @@ public class Constants {
     public static final double ROBOT_LOOP = 0.02;
 
     public static class Vision {
-        public static final String kCamera1Name = "limelight4"; // left limelight?
+        public static final String kCamera1Name = "limelight4"; // right limelight
         public static final Transform3d kRobotToCam1 = new Transform3d(
-                new Translation3d(10.834, -4.82, 9.065598), // TODO
-                new Rotation3d(0, 0, 11.642)); // TODO
+                new Translation3d(Units.inchesToMeters(10.5), Units.inchesToMeters(-5.472), Units.inchesToMeters(7.482)), // TODO
+                new Rotation3d(Units.degreesToRadians(180), 0, Units.degreesToRadians(26.1))); // TODO
 
-        public static final String kCamera2Name = "limelight3"; // right limelight
+        public static final String kCamera2Name = "limelight3"; // left limelight
         public static final Transform3d kRobotToCam2 = new Transform3d(
-                new Translation3d(12.905, 1.715, 16.065598), // TODO
-                new Rotation3d(0, 0, 0));
-
-        // Vision processing parameters
-        public static final VisionProcessor.LimelightConfig LL4_CONFIG = new VisionProcessor.LimelightConfig(
-                kCamera1Name,
-                kRobotToCam1,
-                0.15, // minTagArea
-                1.0, // minTagSpan
-                2, // minTagCount
-                true // use MegaTag2
-        );
-
-        public static final VisionProcessor.LimelightConfig LL3_CONFIG = new VisionProcessor.LimelightConfig(
-                kCamera2Name,
-                kRobotToCam2,
-                0.15, // minTagArea
-                1.0, // minTagSpan
-                2, // minTagCount
-                false // not using MegaTag2
-        );
+            new Translation3d(Units.inchesToMeters(2.725), Units.inchesToMeters(2.507), Units.inchesToMeters(36.425)), // TODO
+            new Rotation3d(Units.degreesToRadians(0), 0, Units.degreesToRadians(20.55))); // TODO
 
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
@@ -94,13 +75,31 @@ public class Constants {
         public static final double MAX_TRANSLATION_SPEED = 1.0; // m/s
         public static final double MAX_ROTATION_SPEED = 1.0; // rad/s
 
-        public static final double xAlignKP = 0.03; // TODO
-        public static final double xAlignKI = 0; // TODO
-        public static final double xAlignKD = 0; // TODO
+        public static final double xAlignKP = 0.8; // Forward/backward control gain
+        public static final double xAlignKI = 0; // Integral gain
+        public static final double xAlignKD = 0; // Derivative gain for smoothing
 
-        public static final double rotAlignKP = 0.03; // TODO
-        public static final double rotAlignKI = 0; // TODO
-        public static final double rotAlignKD = 0; // TODO
+        public static final double yAlignKP = 0.8; // Side-to-side control gain
+        public static final double yAlignKI = 0; // Integral gain
+        public static final double yAlignKD = 0; // Derivative gain for smoothing
+
+        public static final double rotAlignKP = 0.7; // Rotation control gain
+        public static final double rotAlignKI = 0; // Integral gain
+        public static final double rotAlignKD = 0; // Derivative gain for smoothing
+
+        public static final double CORAL_TARGET_DISTANCE = 0; // meters from coral face
+        public static final double BARGE_TARGET_DISTANCE = 2.0; // meters from speaker
+        public static final double DEFAULT_TARGET_DISTANCE = 1.0; // default approach distance
+
+        // Coral structure alignment specifics
+        public static final double CORAL_POLE_OFFSET = Meters.convertFrom(6.074, Inches); // meters to offset from center to poles 6.074 in
+        public static final double CORAL_POLE_TX_OFFSET = 12.0; // approximate tx value offset for poles
+
+        // Target ty values for different game elements (for tx/ty fallback mode)
+        public static final double CORAL_TARGET_TY = 5.0; // ty value for coral approach
+        public static final double SPEAKER_TARGET_TY = 15.0; // ty value for speaker approach
+        public static final double TRAP_TARGET_TY = 20.0; // ty value for trap approach
+        public static final double SOURCE_TARGET_TY = 10.0; // ty value for source approach
     }
 
     /**

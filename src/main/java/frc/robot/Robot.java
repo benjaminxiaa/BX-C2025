@@ -17,11 +17,6 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
-  private final boolean kUseLimelight = true;
-
-  private LimelightSimulation limelightSim;
-  private LimelightSimulation limelight2Sim;
-
   public Robot() {
     m_robotContainer = new RobotContainer();
   }
@@ -29,15 +24,16 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     if (Utils.isSimulation()) {
-      limelightSim = new LimelightSimulation(
-          Constants.Vision.kCamera1Name,
-          Constants.Vision.kRobotToCam1);
-      limelight2Sim = new LimelightSimulation(
-          Constants.Vision.kCamera2Name,
-          Constants.Vision.kRobotToCam2);
+      LimelightSimulation limelightSim = new LimelightSimulation(
+                Constants.Vision.kCamera1Name, Constants.Vision.kRobotToCam1);
 
-      SmartDashboard.putData("LL1Field", limelightSim.getField2d());
-      SmartDashboard.putData("LL2Field", limelight2Sim.getField2d());
+      // Back Limelight
+        LimelightSimulation limelight2Sim = new LimelightSimulation(
+                Constants.Vision.kCamera2Name, Constants.Vision.kRobotToCam2);
+
+      // Show field visualizations
+      SmartDashboard.putData("LL1 Field", limelightSim.getField2d());
+      SmartDashboard.putData("LL2 Field", limelight2Sim.getField2d());
     }
   }
 
@@ -45,9 +41,6 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     m_robotContainer.updateTelemetry();
-    if (kUseLimelight) {
-      m_robotContainer.updateVision();
-    }
   }
 
   @Override
@@ -110,8 +103,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {
-    if (limelightSim != null) {
-      limelightSim.update(m_robotContainer.drivetrain.getState().Pose);
-    }
+
   }
 }
